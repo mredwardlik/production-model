@@ -1,25 +1,19 @@
 class Rule {
 
     constructor(conclusion) {
+        this.conclusion;
+        this.conditions = []
+        this.then(conclusion)
+    }
+
+    then(conclusion) {
+        if (!(conclusion instanceof Action)) throw new Error(`Conclusion cannot be instance of ${typeof conclusion}`)
         this.conclusion = conclusion
-        this.conditions = {
-            and: [],
-            or: []
-        }
-    }
-
-    and(...conditions) {
-        for (let condition of conditions) this.conditions.and.push(condition)
-        return this
-    }
-
-    or(...conditions) {
-        for (let condition of conditions) this.conditions.or.push(condition)
-        return this
     }
 
     if(...conditions) {
-        return this.and(...conditions)
+        for (let condition of conditions) this.conditions.push(condition)
+        return this
     }
 
     /*toString() {
@@ -69,6 +63,9 @@ class ProductionModel {
 
     }
 
+    step() {
+
+    }
 
 }
 
@@ -106,26 +103,17 @@ class ActionFactory {
 
 }
 
+function rule() {
 
-function actions(actions) {
-    return new ActionFactory(actions).init()
 }
 
+function reg(actions) {
+    return new ActionFactory(actions).init()
+}
 
 function productionModel(input, rules, actions) {
 
 }
-
-
-
-
-
-
-
-
-
-
-
 
 window.onload = function () {
 
@@ -153,7 +141,7 @@ window.onload = function () {
         ] */
 
 
-    let action = actions([
+    let action = reg([
         "пригласить подругу",
         "подготовить костюм",
         "купить билеты",
@@ -161,43 +149,44 @@ window.onload = function () {
         "освободить вечер",
         "настроение отличное",
         "сделать макияж",
-        "идти на концерт"
+        "идти на концерт",
+        "say hello"
     ])
-
-    Rule().if
 
     let rules = [
 
+        new Rule(action("say hello")).if("go"),
+
         new Rule(
-            action("пригласить подругу")).and(
+            action("пригласить подругу")).if(
                 action("идти на концерт")),
 
         new Rule(
-            action("пригласить подругу")).and(
+            action("пригласить подругу")).if(
                 action("идти на концерт"),
                 action("освободить вечер")),
 
         new Rule(
-            action("купить билеты")).and(
+            action("купить билеты")).if(
                 action("идти на концерт"),
                 action("пригласить подругу")),
 
         new Rule(
-            action("подобрать туфли")).and(
+            action("подобрать туфли")).if(
                 action("подготовить костюм")),
 
         new Rule(
-            action("освободить вечер")).and(
+            action("освободить вечер")).if(
                 action("купить билеты")),
 
         new Rule(
-            action("настроение отличное")).and(
+            action("настроение отличное")).if(
                 action("идти на концерт"),
                 action("пригласить подругу"),
                 action("сделать макияж")),
 
         new Rule(
-            action("сделать макияж")).and(
+            action("сделать макияж")).if(
                 action("идти на концерт"),
                 action("подготовить костюм"),
                 action("подобрать туфли"))
@@ -206,5 +195,5 @@ window.onload = function () {
 
     let input = action("идти на концерт")
 
-    let pm = productionModel(input, rules, actions)*/
+    let pm = productionModel(input, rules)
 };

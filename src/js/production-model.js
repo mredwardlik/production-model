@@ -1,3 +1,4 @@
+
 class Rule {
 
     constructor(conclusion) {
@@ -12,7 +13,8 @@ class Rule {
     }
 
     if(...conditions) {
-        for (let condition of conditions) this.conditions.push(condition)
+        if (!conditions) return false
+        this.conditions = Array.from(conditions).flat(Infinity)
         return this
     }
 
@@ -32,13 +34,19 @@ class Rule {
 
 class Memory {
 
-    constructor() {
-        this.actions = []
+    constructor(...actions) {
+        this.cache = []
+        this.add(...actions)
     }
 
-    addActions() {
-
+    add(...actions) {
+        if (!actions || !Array.isArray(actions) || actions == []) throw new Error("Argument is not an array or empty")
+        actions = actions.flat(Infinity)
+        if (actions.every((item) => item instanceof Action)) throw new Error("Array has no actions")
+        this.cache.push(actions)
+        return true
     }
+
 
 }
 
@@ -51,7 +59,7 @@ class ProductionModel {
         this.input = input
         this.rules = []
         this.actions = []
-        this.memory = []
+        this.memory = new Memory(input)
 
         this.addRules(rules)
     }
@@ -60,10 +68,6 @@ class ProductionModel {
         if (!rules) return false
         this.rules = Array.from(rules).flat(Infinity)
         return true
-    }
-
-    addActions(...actions) {
-
     }
 
     step() {
@@ -171,7 +175,15 @@ window.onload = function () {
         perform(action("сделать макияж"))       .if(action("идти на концерт"), action("подготовить костюм"), action("подобрать туфли"))
     ]
 
-    console.dir()
+    // let action1 = perform(action("идти на концерт")).if(action("подготовить костюм"), action("подобрать туфли"))
+
+    let memory = new Memory(action("сделать макияж"), action("идти на концерт"))
+    console.dir(memory)
+    //memory.send("goodbuy", "asdasd", "asdasd")
+
+
+    
+
 
     let pm = productionModel(input, rules)
 

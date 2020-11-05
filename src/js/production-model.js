@@ -42,6 +42,9 @@ class Memory {
 
 }
 
+/**
+ * Main
+ */
 class ProductionModel {
 
     constructor(input, rules) {
@@ -71,8 +74,13 @@ class ProductionModel {
 
 class Action {
 
-    constructor(name) {
+    constructor(name, names) {
         this.name = name
+        this.names = names
+    }
+
+    perform() {
+        return true
     }
 
 }
@@ -81,14 +89,16 @@ class ActionFactory {
 
     constructor(...names) {
         this.names = []
+        this.used = {}
         this.add(...names)
+        return (name) => this.action(name)
     }
 
-    init() {
-        return (name) => {
-            if (!this.check(name)) throw Error(`Can't find "${name}" action in list`)
-            return new Action(name)
-        }
+    action(name) {
+        if (!this.check(name)) throw Error(`Can't find "${name}" action in list`)
+        if (this.used[name]) return this.used[name]
+        this.used[name] = new Action(name, this.names)
+        return this.used[name]
     }
 
     add(...names) {
@@ -103,45 +113,41 @@ class ActionFactory {
 
 }
 
-function rule() {
 
+
+
+
+
+
+
+/**
+ * Get a new rule object
+ * @param {Action} conclusion - action that will be executed if ...
+ */
+function perform(conclusion) {
+    return new Rule(conclusion)
 }
 
-function reg(actions) {
-    return new ActionFactory(actions).init()
+/**
+ * Get a new factory for creaing new actions
+ * @param {Array} actions - set of action for check correct use
+ */
+function register(actions) {
+    return new ActionFactory(actions)
 }
 
-function productionModel(input, rules, actions) {
-
+/**
+ * The main function
+ * @param {Array|Action} input 
+ * @param {Array} rules
+ */
+function productionModel(input, rules) {
+    return new ProductionModel(input, rules)
 }
 
 window.onload = function () {
 
-    /*
-    
-        let actions = new Actions([
-            new Action("пригласить подругу"),
-            new Action("подготовить костюм"),
-            new Action("купить билеты"),
-            new Action("подобрать туфли"),
-            new Action("освободить вечер"),
-            new Action("настроение отличное"),
-            new Action("сделать макияж"),
-            new Action("идти на концерт")
-        ]) 
-    
-        let rules = [
-            new Rule("пригласить подругу").and("идти на концерт"),
-            new Rule("подготовить костюм").and("идти на концерт", "освободить вечер"),
-            new Rule("купить билеты").and("идти на концерт", "пригласить подругу"),
-            new Rule("подобрать туфли").and("подготовить костюм"),
-            new Rule("освободить вечер").and("купить билеты"),
-            new Rule("настроение отличное").and("идти на концерт", "пригласить подругу", "сделать макияж"),
-            new Rule("сделать макияж").and("идти на концерт", "подготовить костюм", "подобрать туфли")
-        ] */
-
-
-    let action = reg([
+    let action = register([
         "пригласить подругу",
         "подготовить костюм",
         "купить билеты",
@@ -149,51 +155,24 @@ window.onload = function () {
         "освободить вечер",
         "настроение отличное",
         "сделать макияж",
-        "идти на концерт",
-        "say hello"
+        "идти на концерт"
     ])
-
-    let rules = [
-
-        new Rule(action("say hello")).if("go"),
-
-        new Rule(
-            action("пригласить подругу")).if(
-                action("идти на концерт")),
-
-        new Rule(
-            action("пригласить подругу")).if(
-                action("идти на концерт"),
-                action("освободить вечер")),
-
-        new Rule(
-            action("купить билеты")).if(
-                action("идти на концерт"),
-                action("пригласить подругу")),
-
-        new Rule(
-            action("подобрать туфли")).if(
-                action("подготовить костюм")),
-
-        new Rule(
-            action("освободить вечер")).if(
-                action("купить билеты")),
-
-        new Rule(
-            action("настроение отличное")).if(
-                action("идти на концерт"),
-                action("пригласить подругу"),
-                action("сделать макияж")),
-
-        new Rule(
-            action("сделать макияж")).if(
-                action("идти на концерт"),
-                action("подготовить костюм"),
-                action("подобрать туфли"))
-
-    ]
 
     let input = action("идти на концерт")
 
+    // rule().if("")
+    let rules = [
+        perform(action("пригласить подругу"))   .if(action("идти на концерт")),
+        perform(action("пригласить подругу"))   .if(action("идти на концерт"), action("освободить вечер")),
+        perform(action("купить билеты"))        .if(action("идти на концерт"), action("пригласить подругу")),
+        perform(action("подобрать туфли"))      .if(action("подготовить костюм")),
+        perform(action("освободить вечер"))     .if(action("купить билеты")),
+        perform(action("настроение отличное"))  .if(action("идти на концерт"), action("пригласить подругу"), action("сделать макияж")),
+        perform(action("сделать макияж"))       .if(action("идти на концерт"), action("подготовить костюм"), action("подобрать туфли"))
+    ]
+
+    console.dir()
+
     let pm = productionModel(input, rules)
+
 };

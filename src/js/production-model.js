@@ -32,6 +32,10 @@ class Rule {
 
 }
 
+let Rules = function() {
+
+}
+
 class Memory {
 
     constructor(...actions) {
@@ -42,8 +46,8 @@ class Memory {
     add(...actions) {
         if (!actions || !Array.isArray(actions) || actions == []) throw new Error("Argument is not an array or empty")
         actions = actions.flat(Infinity)
-        if (actions.every((item) => item instanceof Action)) throw new Error("Array has no actions")
-        this.cache.push(actions)
+        if (!actions.every(item => item instanceof Action)) throw new Error("Array has no actions")
+        this.cache.push(...actions)
         return true
     }
 
@@ -142,8 +146,8 @@ function register(actions) {
 
 /**
  * The main function
- * @param {Array|Action} input 
- * @param {Array} rules
+ * @param {Array|Action} input - initial cache state
+ * @param {Array} rules - set of rules
  */
 function productionModel(input, rules) {
     return new ProductionModel(input, rules)
@@ -162,7 +166,7 @@ window.onload = function () {
         "идти на концерт"
     ])
 
-    let input = action("идти на концерт")
+    let input = [action("идти на концерт"), action("освободить вечер")]
 
     // rule().if("")
     let rules = [
@@ -177,8 +181,8 @@ window.onload = function () {
 
     // let action1 = perform(action("идти на концерт")).if(action("подготовить костюм"), action("подобрать туфли"))
 
-    let memory = new Memory(action("сделать макияж"), action("идти на концерт"))
-    console.dir(memory)
+    //let memory = new Memory(action("сделать макияж"), action("идти на концерт"))
+    //console.dir(memory)
     //memory.send("goodbuy", "asdasd", "asdasd")
 
 
@@ -186,5 +190,6 @@ window.onload = function () {
 
 
     let pm = productionModel(input, rules)
+    console.dir(pm)
 
 };

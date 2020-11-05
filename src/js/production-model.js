@@ -32,10 +32,6 @@ class Rule {
 
 }
 
-let Rules = function() {
-
-}
-
 class Memory {
 
     constructor(...actions) {

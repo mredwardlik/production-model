@@ -15,8 +15,8 @@
 class Rule {
 
     /**
-     * 
-     * @param {...Action} conclusions - 
+     * Initialize conclusions and conditions arrays
+     * @param {...Action} conclusions - Actions that have to be performed
      */
     constructor(...conclusions) {
         this.conclusions = []
@@ -24,6 +24,10 @@ class Rule {
         this.then(...conclusions)
     }
 
+    /**
+     * Put actions to conclusions array
+     * @param {...Action} conclusions - Actions that have to be performed
+     */
     then(...conclusions) {
         if (!conclusions || !Array.isArray(conclusions) || conclusions == []) throw new Error("Argument is not an array or empty")
         conclusions = conclusions.flat(Infinity)
@@ -58,7 +62,7 @@ class Cache {
 
     /**
      * Initialize container and put actions there
-     * @param  {(Action[]|Action)} actions Actions for be stored inside cache container
+     * @param {(Action[]|Action)} actions Actions for be stored inside cache container
      */
     constructor(...actions) {
         this.container = []
@@ -67,10 +71,10 @@ class Cache {
 
     /**
      * Add actions to the cache container
-     * @param  {(Action[]|Action)} actions 
+     * @param {(Action[]|Action)} actions 
      * @throws {Error} Argument is not an array or empty
      * @throws {Error} Array has no actions
-     * @return {bool} true if action or actions were added to the cache container
+     * @returns {boolean} true if action or actions were added to the cache container
      */
 
     add(...actions) {
@@ -83,7 +87,7 @@ class Cache {
     /**
      * Remove actions from the end of the contrainer
      * @param {number} [count=1] Remove a few actions if needed
-     * @return {bool} If the removing was successful return true, otherwise false 
+     * @returns {boolean} If the removing was successful return true, otherwise false 
      */
     remove(count = 1) {
         let action = myFish.splice(myFish.length - 1, count);
@@ -111,13 +115,10 @@ class Action {
     }
 
     /**
-     * 
+     * Save user function as performing action
      * @param {callback} callback - User function
      */
     perform(callback = null) {
-        if (callback != null) {
-            this.callback = 
-        }
         this.callback = callback
     }
 
@@ -130,8 +131,9 @@ class Action {
 class ActionFactory {
 
     /**
-     * 
-     * @param  {string[]|string} names - 
+     * Initialize properties
+     * @param {string[]|string} names - 
+     * @returns {}
      */
     constructor(...names) {
         this.names = []
@@ -140,6 +142,12 @@ class ActionFactory {
         return (name) => this.action(name)
     }
 
+    /**
+     * Create a new action or get one if already used
+     * @param {string} name - Action name
+     * @throws {Error} Can't find "${name}" in regester action list
+     * @returns {Action} A new or already created action
+     */
     action(name) {
         if (!this.check(name)) throw Error(`Can't find "${name}" in regester action list`)
         if (this.used[name]) return this.used[name]
@@ -147,12 +155,22 @@ class ActionFactory {
         return this.used[name]
     }
 
+    /**
+     * Add registered names for store
+     * @param {boolean} names - Registered names
+     * @returns {boolean} If the adding was successful return true, otherwise false
+     */
     add(...names) {
         if (!names) return false
         this.names = Array.from(names).flat(Infinity)
         return true
     }
 
+    /**
+     * Check type and find a name in registered list of names
+     * @param {string} name - Action name
+     * @return {boolean} If registered names list has the name return true, otherwise false
+     */
     check(name) {
         return (typeof name == "string" && this.names.includes(name)) ? true : false
     }
@@ -165,14 +183,26 @@ class ActionFactory {
  */
 class ProductionModel {
 
+    /**
+     * Initialize properties
+     * @param {(Action[]|Action)} inputs - Initial cache state
+     * @param {(Rule[]|Rule)} rules - Set of rules
+     */
     constructor(inputs, rules) {
         this.rules = []
         this.caches = []
 
         this.caches.push(new Cache(inputs))
-        this.addRules(rules)
+        this.ruling(rules)
     }
 
+    /**
+     * 
+     * @param {...Rule} rules - Set of rules
+     * @throws {Error} Argument is not an array or empty
+     * @throws {Error} Array has no rules
+     * @returns {boolean} If the rules adding was successful return true, otherwise false
+     */
     ruling(...rules) {
         if (!rules || !Array.isArray(rules) || rules == []) throw new Error("Argument is not an array or empty")
         rules = rules.flat(Infinity)
@@ -191,7 +221,7 @@ class ProductionModel {
 /**
  * Get a new rule object
  * @param {(Action[]|Action)} conclusions - Action that will be executed if ...
- * @return {Rule} 
+ * @returns {Rule} 
  */
 function perform(conclusions) {
     return new Rule(conclusions)

@@ -1,15 +1,34 @@
+/**
+ * Production Model Builder
+ * https://github.com/feftio/production-model
+ * 
+ * @author Lik Eduard <feft99@gmail.com>
+ * @version 1.1
+ * @license
+ * 
+ */
 
+
+/**
+ * The class which stores conclusions and conditions
+ */
 class Rule {
 
-    constructor(conclusion) {
-        this.conclusion;
+    /**
+     * 
+     * @param {...Action} conclusions - 
+     */
+    constructor(...conclusions) {
+        this.conclusions = []
         this.conditions = []
-        this.then(conclusion)
+        this.then(...conclusions)
     }
 
-    then(conclusion) {
-        if (!(conclusion instanceof Action)) throw new Error(`Conclusion cannot be instance of ${typeof conclusion}`)
-        this.conclusion = conclusion
+    then(...conclusions) {
+        if (!conclusions || !Array.isArray(conclusions) || conclusions == []) throw new Error("Argument is not an array or empty")
+        conclusions = conclusions.flat(Infinity)
+        if (!conclusions.every(item => item instanceof Action)) throw new Error(`Conclusion cannot be instance of ${typeof conclusion}`)
+        this.conclusions.push(...conclusions)
     }
 
     if(...conditions) {
@@ -32,65 +51,88 @@ class Rule {
 
 }
 
-class Memory {
+/**
+ * The class whic stores actions in a container
+ */
+class Cache {
 
+    /**
+     * Initialize container and put actions there
+     * @param  {(Action[]|Action)} actions Actions for be stored inside cache container
+     */
     constructor(...actions) {
-        this.cache = []
+        this.container = []
         this.add(...actions)
     }
+
+    /**
+     * Add actions to the cache container
+     * @param  {(Action[]|Action)} actions 
+     * @throws {Error} Argument is not an array or empty
+     * @throws {Error} Array has no actions
+     * @return {bool} true if action or actions were added to the cache container
+     */
 
     add(...actions) {
         if (!actions || !Array.isArray(actions) || actions == []) throw new Error("Argument is not an array or empty")
         actions = actions.flat(Infinity)
         if (!actions.every(item => item instanceof Action)) throw new Error("Array has no actions")
-        this.cache.push(...actions)
+        this.container.push(...actions)
         return true
+    }
+    /**
+     * Remove actions from the end of the contrainer
+     * @param {number} [count=1] Remove a few actions if needed
+     * @return {bool} If the removing was successful return true, otherwise false 
+     */
+    remove(count = 1) {
+        let action = myFish.splice(myFish.length - 1, count);
+        return action ? true : false
     }
 
 
 }
+
 
 /**
- * Main
+ * Event, act or something else that used as a conclusion
  */
-class ProductionModel {
-
-    constructor(input, rules) {
-        this.input = input
-        this.rules = []
-        this.actions = []
-        this.memory = new Memory(input)
-
-        this.addRules(rules)
-    }
-
-    addRules(...rules) {
-        if (!rules) return false
-        this.rules = Array.from(rules).flat(Infinity)
-        return true
-    }
-
-    step() {
-
-    }
-
-}
-
 class Action {
 
+    /**
+     * Initialize name, names and callback
+     * @param {string} name - 
+     * @param {string[]} names - 
+     */
     constructor(name, names) {
         this.name = name
         this.names = names
+        this.callback = null
     }
 
-    perform() {
-        return true
+    /**
+     * 
+     * @param {callback} callback - User function
+     */
+    perform(callback = null) {
+        if (callback != null) {
+            this.callback = 
+        }
+        this.callback = callback
     }
 
 }
 
+
+/**
+ * Factory for controlled creation of actions
+ */
 class ActionFactory {
 
+    /**
+     * 
+     * @param  {string[]|string} names - 
+     */
     constructor(...names) {
         this.names = []
         this.used = {}
@@ -99,7 +141,7 @@ class ActionFactory {
     }
 
     action(name) {
-        if (!this.check(name)) throw Error(`Can't find "${name}" action in list`)
+        if (!this.check(name)) throw Error(`Can't find "${name}" in regester action list`)
         if (this.used[name]) return this.used[name]
         this.used[name] = new Action(name, this.names)
         return this.used[name]
@@ -118,37 +160,67 @@ class ActionFactory {
 }
 
 
+/**
+ * The main class of the library
+ */
+class ProductionModel {
 
+    constructor(inputs, rules) {
+        this.rules = []
+        this.caches = []
 
+        this.caches.push(new Cache(inputs))
+        this.addRules(rules)
+    }
 
+    ruling(...rules) {
+        if (!rules || !Array.isArray(rules) || rules == []) throw new Error("Argument is not an array or empty")
+        rules = rules.flat(Infinity)
+        if (!rules.every(item => item instanceof Rule)) throw new Error("Array has no rules")
+        this.rules.push(...rules)
+        return true
+    }
 
+    step() {
+
+    }
+
+}
 
 
 /**
  * Get a new rule object
- * @param {Action} conclusion - action that will be executed if ...
+ * @param {(Action[]|Action)} conclusions - Action that will be executed if ...
+ * @return {Rule} 
  */
-function perform(conclusion) {
-    return new Rule(conclusion)
+function perform(conclusions) {
+    return new Rule(conclusions)
 }
+
 
 /**
  * Get a new factory for creaing new actions
- * @param {Array} actions - set of action for check correct use
+ * @param {Action[]} actions - Set of action for check correct use
  */
 function register(actions) {
     return new ActionFactory(actions)
 }
 
+
 /**
- * The main function
- * @param {Array|Action} input - initial cache state
- * @param {Array} rules - set of rules
+ * The main function of the library
+ * @param {(Action[]|Action)} inputs - Initial cache state
+ * @param {(Rule[]|Rule)} rules - Set of rules
+ * @returns 
  */
-function productionModel(input, rules) {
-    return new ProductionModel(input, rules)
+function productionModel(inputs, rules) {
+    return new ProductionModel(inputs, rules)
 }
 
+
+/**
+ * Testing
+ */
 window.onload = function () {
 
     let action = register([
@@ -162,30 +234,21 @@ window.onload = function () {
         "идти на концерт"
     ])
 
-    let input = [action("идти на концерт"), action("освободить вечер")]
-
-    // rule().if("")
-    let rules = [
-        perform(action("пригласить подругу"))   .if(action("идти на концерт")),
-        perform(action("пригласить подругу"))   .if(action("идти на концерт"), action("освободить вечер")),
-        perform(action("купить билеты"))        .if(action("идти на концерт"), action("пригласить подругу")),
-        perform(action("подобрать туфли"))      .if(action("подготовить костюм")),
-        perform(action("освободить вечер"))     .if(action("купить билеты")),
-        perform(action("настроение отличное"))  .if(action("идти на концерт"), action("пригласить подругу"), action("сделать макияж")),
-        perform(action("сделать макияж"))       .if(action("идти на концерт"), action("подготовить костюм"), action("подобрать туфли"))
+    let input = [
+        action("сделать макияж"),
+        action("идти на концерт")
     ]
 
-    // let action1 = perform(action("идти на концерт")).if(action("подготовить костюм"), action("подобрать туфли"))
-
-    //let memory = new Memory(action("сделать макияж"), action("идти на концерт"))
-    //console.dir(memory)
-    //memory.send("goodbuy", "asdasd", "asdasd")
-
-
-    
-
+    let rules = [
+        perform(action("пригласить подругу")).if(action("идти на концерт")),
+        perform(action("пригласить подругу")).if(action("идти на концерт"), action("освободить вечер")),
+        perform(action("купить билеты")).if(action("идти на концерт"), action("пригласить подругу")),
+        perform(action("подобрать туфли")).if(action("подготовить костюм")),
+        perform(action("освободить вечер")).if(action("купить билеты")),
+        perform(action("настроение отличное")).if(action("идти на концерт"), action("пригласить подругу"), action("сделать макияж")),
+        perform(action("сделать макияж")).if(action("идти на концерт"), action("подготовить костюм"), action("подобрать туфли"))
+    ]
 
     let pm = productionModel(input, rules)
-    console.dir(pm)
 
 };

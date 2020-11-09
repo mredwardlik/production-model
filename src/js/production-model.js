@@ -10,13 +10,28 @@
 
 
 /**
+ * Get flattened array
+ * @param {Array} items - Set of homogenous elements
+ * @param {Function} callback - Аdditional processing of array elements
+ * @throws {Error} Argument is not an array
+ * @returns {Array} Flattened array
+ */
+function flat(items, callback = null) {
+    if (!Array.isArray(items)) throw new Error("The argument is not an array")
+    if (!items || items == []) return 0
+    items = items.flat(Infinity)
+    if (callback != null) items.forEach((item, i, arr) => callback(item, i, arr))
+    return items
+}
+
+/**
  * The class which stores conclusions and conditions
  */
 class Rule {
 
     /**
      * Initialize conclusions and conditions arrays
-     * @param {...Action} conclusions - Actions that have to be performed
+     * @param {...Action} conclusions - Actions that must be performed
      */
     constructor(...conclusions) {
         this.conclusions = []
@@ -26,18 +41,25 @@ class Rule {
 
     /**
      * Put actions to conclusions array
-     * @param {...Action} conclusions - Actions that have to be performed
+     * @param {...Action} conclusions - Actions that must be performed
      */
     then(...conclusions) {
-        if (!conclusions || !Array.isArray(conclusions) || conclusions == []) throw new Error("Argument is not an array or empty")
-        conclusions = conclusions.flat(Infinity)
-        if (!conclusions.every(item => item instanceof Action)) throw new Error(`Conclusion cannot be instance of ${typeof conclusion}`)
-        this.conclusions.push(...conclusions)
+        flat(conclusions, conclusion => {
+            if (!(conclusion instanceof Action)) throw new Error(`The conclusion cannot be instance of ${typeof conclusion}`)
+            if (!(this.conclusions.includes(conclusion))) this.conclusions.push(conclusion)
+        })
+        return this
     }
 
+    /**
+     * 
+     * @param  {...Action} conditions 
+     */
     if(...conditions) {
-        if (!conditions) return false
-        this.conditions = Array.from(conditions).flat(Infinity)
+        flat(conditions, condition => {
+            if (!(condition instanceof Action)) throw new Error(`The condition cannot be instance of ${typeof condition}`)
+            if (!(this.conditions.includes(condition))) this.conditions.push(condition)
+        })
         return this
     }
 
@@ -72,18 +94,16 @@ class Cache {
     /**
      * Add actions to the cache container
      * @param {(Action[]|Action)} actions 
-     * @throws {Error} Argument is not an array or empty
      * @throws {Error} Array has no actions
      * @returns {boolean} true if action or actions were added to the cache container
      */
-
     add(...actions) {
-        if (!actions || !Array.isArray(actions) || actions == []) throw new Error("Argument is not an array or empty")
-        actions = actions.flat(Infinity)
-        if (!actions.every(item => item instanceof Action)) throw new Error("Array has no actions")
-        this.container.push(...actions)
+        this.container.push(...flat(actions, (action) => {
+            if (!(action instanceof Action)) throw new Error(`The array must only consist of Action`)
+        }))
         return true
     }
+
     /**
      * Remove actions from the end of the contrainer
      * @param {number} [count=1] Remove a few actions if needed
@@ -93,7 +113,6 @@ class Cache {
         let action = myFish.splice(myFish.length - 1, count);
         return action ? true : false
     }
-
 
 }
 
@@ -105,21 +124,35 @@ class Action {
 
     /**
      * Initialize name, names and callback
-     * @param {string} name - 
-     * @param {string[]} names - 
+     * @param {string} name - The action id
+     * @param {string[]} names - The registered names 
      */
     constructor(name, names) {
         this.name = name
         this.names = names
+        this._count = 1
         this.callback = null
     }
 
+    _perform() {
+        this.callback()
+        this._count--
+    }
+
     /**
-     * Save user function as performing action
-     * @param {callback} callback - User function
+     * Save user's function as performing action
+     * @param {Function} callback - User's function
      */
     perform(callback = null) {
         this.callback = callback
+    }
+
+    /**
+     * Save count in the action
+     * @param {number} count - How many times to perform the action
+     */
+    count(count = 1) {
+        this._count = count
     }
 
 }
@@ -132,8 +165,8 @@ class ActionFactory {
 
     /**
      * Initialize properties
-     * @param {string[]|string} names - 
-     * @returns {}
+     * @param {string[]|string} names - The registered names
+     * @returns {Function} Create a new action or get the one if already created
      */
     constructor(...names) {
         this.names = []
@@ -143,13 +176,13 @@ class ActionFactory {
     }
 
     /**
-     * Create a new action or get one if already used
-     * @param {string} name - Action name
+     * Create a new action or get the one if already created
+     * @param {string} name - The action id
      * @throws {Error} Can't find "${name}" in regester action list
      * @returns {Action} A new or already created action
      */
     action(name) {
-        if (!this.check(name)) throw Error(`Can't find "${name}" in regester action list`)
+        if (!this.check(name)) throw Error(`Can't find "${name}" in regester action list. Add "${name}" to register action list or correct the action name.`)
         if (this.used[name]) return this.used[name]
         this.used[name] = new Action(name, this.names)
         return this.used[name]
@@ -161,8 +194,10 @@ class ActionFactory {
      * @returns {boolean} If the adding was successful return true, otherwise false
      */
     add(...names) {
-        if (!names) return false
-        this.names = Array.from(names).flat(Infinity)
+        flat(names, name => {
+            if (typeof name != "string") throw new Error("The names must be string")
+            if (!(this.names.includes(name))) this.names.push(name)
+        })
         return true
     }
 
@@ -204,10 +239,10 @@ class ProductionModel {
      * @returns {boolean} If the rules adding was successful return true, otherwise false
      */
     ruling(...rules) {
-        if (!rules || !Array.isArray(rules) || rules == []) throw new Error("Argument is not an array or empty")
-        rules = rules.flat(Infinity)
-        if (!rules.every(item => item instanceof Rule)) throw new Error("Array has no rules")
-        this.rules.push(...rules)
+        flat(rules, rule => {
+            if (!(rule instanceof Rule)) throw new Error(`The array must only consist of Rule`)
+            this.rules.push(rule)
+        })
         return true
     }
 
@@ -217,36 +252,32 @@ class ProductionModel {
 
 }
 
-
 /**
- * Get a new rule object
+ * Wrapper. Get a new rule object
  * @param {(Action[]|Action)} conclusions - Action that will be executed if ...
  * @returns {Rule} 
  */
-function perform(conclusions) {
-    return new Rule(conclusions)
+function perform(...conclusions) {
+    return new Rule(...conclusions)
 }
 
-
 /**
- * Get a new factory for creaing new actions
+ * Wrapper. Get a new factory for creaing new actions
  * @param {Action[]} actions - Set of action for check correct use
  */
 function register(actions) {
     return new ActionFactory(actions)
 }
 
-
 /**
- * The main function of the library
+ * Wrapper. The main function of the library
  * @param {(Action[]|Action)} inputs - Initial cache state
  * @param {(Rule[]|Rule)} rules - Set of rules
- * @returns 
+ * @returns {ProductionModel} The main class in the library
  */
 function productionModel(inputs, rules) {
     return new ProductionModel(inputs, rules)
 }
-
 
 /**
  * Testing
@@ -264,21 +295,22 @@ window.onload = function () {
         "идти на концерт"
     ])
 
-    let input = [
-        action("сделать макияж"),
-        action("идти на концерт")
-    ]
+    // let input = [
+    //     action("сделать макияж"),
+    //     action("идти на концерт")
+    // ]
 
-    let rules = [
-        perform(action("пригласить подругу")).if(action("идти на концерт")),
-        perform(action("пригласить подругу")).if(action("идти на концерт"), action("освободить вечер")),
-        perform(action("купить билеты")).if(action("идти на концерт"), action("пригласить подругу")),
-        perform(action("подобрать туфли")).if(action("подготовить костюм")),
-        perform(action("освободить вечер")).if(action("купить билеты")),
-        perform(action("настроение отличное")).if(action("идти на концерт"), action("пригласить подругу"), action("сделать макияж")),
-        perform(action("сделать макияж")).if(action("идти на концерт"), action("подготовить костюм"), action("подобрать туфли"))
-    ]
+    // let rules = [
+    //     perform(action("пригласить подругу")).if(action("идти на концерт")),
+    //     perform(action("пригласить подругу")).if(action("идти на концерт"), action("освободить вечер")),
+    //     perform(action("купить билеты")).if(action("идти на концерт"), action("пригласить подругу")),
+    //     perform(action("подобрать туфли")).if(action("подготовить костюм")),
+    //     perform(action("освободить вечер")).if(action("купить билеты")),
+    //     perform(action("настроение отличное")).if(action("идти на концерт"), action("пригласить подругу"), action("сделать макияж")),
+    //     perform(action("сделать макияж")).if(action("идти на концерт"), action("подготовить костюм"), action("подобрать туфли"))
+    // ]
+    
+    //let pm = productionModel(input, rules)
 
-    let pm = productionModel(input, rules)
-
+    //console.log( perform(action("сделать макияж")).if(action("идти на концерт")) )
 };

@@ -8,7 +8,6 @@
  * 
  */
 
-
 /**
  * Get flattened array
  * @param {Array} items - Set of homogenous elements
@@ -40,7 +39,7 @@ class Rule {
     }
 
     /**
-     * Put actions to conclusions array
+     * Append actions as a set of conclusions
      * @param {...Action} conclusions - Actions that must be performed
      */
     then(...conclusions) {
@@ -52,8 +51,9 @@ class Rule {
     }
 
     /**
-     * 
-     * @param  {...Action} conditions 
+     * Append actions as a set of conditions
+     * @param {...Action} conditions
+     * @throws {Error} The condition cannot be instance of ${typeof condition}
      */
     if(...conditions) {
         flat(conditions, condition => {
@@ -63,17 +63,13 @@ class Rule {
         return this
     }
 
-    /*toString() {
+    toString() {
         let string = "Если "
-        for (let key in this.conditions) {
-            this.conditions[key].forEach((item, i, arr) => {
-                if (key == "and") string += (i != arr.length - 1) ? `${item} и ` : `${item}, `
-                if (key == "or") string += (i != arr.length - 1) ? `${item} или ` : `${item}, `
-            })
-        }
-        string += "то " + this.conclusion
+        this.conditions.forEach((item, i, arr) => string += (i != arr.length - 1) ? `${item.name} и ` : `${item.name}, `)
+        string += "то "
+        this.conclusions.forEach((item, i, arr) => string += (i != arr.length - 1) ? `${item.name} и ` : `${item.name}. `)
         return string
-    }*/
+    }
 
 }
 
@@ -94,13 +90,14 @@ class Cache {
     /**
      * Add actions to the cache container
      * @param {(Action[]|Action)} actions 
-     * @throws {Error} Array has no actions
-     * @returns {boolean} true if action or actions were added to the cache container
+     * @throws {Error} The array must only consist of Action
+     * @returns {boolean} True if actions were added to the cache container
      */
     add(...actions) {
-        this.container.push(...flat(actions, (action) => {
+        flat(actions, action => {
             if (!(action instanceof Action)) throw new Error(`The array must only consist of Action`)
-        }))
+            this.container.push(action)
+        })
         return true
     }
 
@@ -110,7 +107,7 @@ class Cache {
      * @returns {boolean} If the removing was successful return true, otherwise false 
      */
     remove(count = 1) {
-        let action = myFish.splice(myFish.length - 1, count);
+        let action = myFish.splice(myFish.length - 1, count)
         return action ? true : false
     }
 
@@ -123,7 +120,7 @@ class Cache {
 class Action {
 
     /**
-     * Initialize name, names and callback
+     * Initialize variables
      * @param {string} name - The action id
      * @param {string[]} names - The registered names 
      */
@@ -141,7 +138,7 @@ class Action {
 
     /**
      * Save user's function as performing action
-     * @param {Function} callback - User's function
+     * @param {Function} [callback=null] callback - User's function
      */
     perform(callback = null) {
         this.callback = callback
@@ -172,7 +169,7 @@ class ActionFactory {
         this.names = []
         this.used = {}
         this.add(...names)
-        return (name) => this.action(name)
+        return name => this.action(name)
     }
 
     /**
@@ -195,7 +192,7 @@ class ActionFactory {
      */
     add(...names) {
         flat(names, name => {
-            if (typeof name != "string") throw new Error("The names must be string")
+            if (typeof name !== "string") throw new Error("The names must be string")
             if (!(this.names.includes(name))) this.names.push(name)
         })
         return true
@@ -295,22 +292,22 @@ window.onload = function () {
         "идти на концерт"
     ])
 
-    // let input = [
-    //     action("сделать макияж"),
-    //     action("идти на концерт")
-    // ]
+    let input = [
+        action("сделать макияж"),
+        action("идти на концерт")
+    ]
 
-    // let rules = [
-    //     perform(action("пригласить подругу")).if(action("идти на концерт")),
-    //     perform(action("пригласить подругу")).if(action("идти на концерт"), action("освободить вечер")),
-    //     perform(action("купить билеты")).if(action("идти на концерт"), action("пригласить подругу")),
-    //     perform(action("подобрать туфли")).if(action("подготовить костюм")),
-    //     perform(action("освободить вечер")).if(action("купить билеты")),
-    //     perform(action("настроение отличное")).if(action("идти на концерт"), action("пригласить подругу"), action("сделать макияж")),
-    //     perform(action("сделать макияж")).if(action("идти на концерт"), action("подготовить костюм"), action("подобрать туфли"))
-    // ]
+    let rules = [
+        perform(action("пригласить подругу")).if(action("идти на концерт")),
+        perform(action("пригласить подругу")).if(action("идти на концерт"), action("освободить вечер")),
+        perform(action("купить билеты")).if(action("идти на концерт"), action("пригласить подругу")),
+        perform(action("подобрать туфли")).if(action("подготовить костюм")),
+        perform(action("освободить вечер")).if(action("купить билеты")),
+        perform(action("настроение отличное")).if(action("идти на концерт"), action("пригласить подругу"), action("сделать макияж")),
+        perform(action("сделать макияж")).if(action("идти на концерт"), action("подготовить костюм"), action("подобрать туфли"))
+    ]
     
-    //let pm = productionModel(input, rules)
+    let pm = productionModel(input, rules)
 
-    //console.log( perform(action("сделать макияж")).if(action("идти на концерт")) )
-};
+    console.log( perform(action("сделать макияж"), action("подготовить костюм")).if(action("идти на концерт"), action("подобрать туфли")).toString() )
+}

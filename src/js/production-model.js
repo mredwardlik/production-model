@@ -81,13 +81,11 @@ class Rule {
     }
 
     isPerformed(...conditions) {
-        let allow = true
+        let allow = 0
         flat(conditions, condition => {
-            if (!(this.conditions.includes(condition))) {
-                return allow = false
-            }
+            if (this.conditions.includes(condition)) allow++
         })
-        return allow
+        return this.conditions.length <= allow
     }
 
     toString() {
@@ -245,10 +243,10 @@ class ProductionModel {
      * @param {(Action[]|Action)} inputs - Initial cache state
      * @param {(Rule[]|Rule)} rules - Set of rules
      */
-    constructor(inputs, rules, head = 0, iteration = 0) {
+    constructor(inputs, rules, iteration = 0) {
         this.rules = []
         this.pending = []
-        this.current = null
+        this.current
         this.iteration = iteration
 
         this.cache = new Cache(inputs)
@@ -260,6 +258,17 @@ class ProductionModel {
     snapshot() {
         this.snapshots.push(JSON.parse(JSON.stringify(this)))
         delete this.snapshots[this.snapshots.length - 1].snapshots
+    }
+
+    next() {
+        if (this.pending == []) return false
+        let currentIndex = this.pending.indexOf(this.current)
+        if (currentIndex + 1 < this.pending.length) {
+            this.current = this.pending[currentIndex + 1]
+        } else {
+            this.current = this.pending[0]
+            this.iteration += 1
+        }
     }
 
     /**
@@ -274,20 +283,33 @@ class ProductionModel {
             this.rules.push(rule)
             this.pending.push(rule)
         })
+        this.current = this.pending[0]
         return true
     }
 
     step() {
-        if (this.pending == []) return false
+        if (this.pending == [] || typeof this.current == 'undefined') return false
+        let conclusions = this.current.perform(this.cache.container)
+        if (Array.isArray(conclusions) && conclusions != []) {
+            this.cache.add(conclusions)
+            this.pending.splice(this.pending.indexOf(this.current), 1)
+        }
         this.snapshot()
-        /**
-         * Need to code
-         */
+        this.next()
     }
 
     iterate() {
         let iteration = this.iteration
-        while(this.iteration == iteration) this.step()
+        while (this.iteration == iteration) this.step()
+    }
+
+    solve() {
+
+        while(true) {
+            if (this.iteration >= this.rules.length) break
+            if (this.pending == [] || typeof this.current == 'undefined') break
+            this.iterate()
+        }
     }
 
 }
@@ -332,7 +354,8 @@ window.onload = function () {
         "освободить вечер",
         "настроение отличное",
         "сделать макияж",
-        "идти на концерт"
+        "идти на концерт",
+        "точка"
     ])
 
     let input = [
@@ -346,15 +369,12 @@ window.onload = function () {
         perform(action("подобрать туфли")).if(action("подготовить костюм")),
         perform(action("освободить вечер")).if(action("купить билеты")),
         perform(action("настроение отличное")).if(action("идти на концерт"), action("пригласить подругу"), action("сделать макияж")),
-        perform(action("сделать макияж")).if(action("идти на концерт"), action("подготовить костюм"), action("подобрать туфли"))
+        perform(action("сделать макияж")).if(action("идти на концерт"), action("подготовить костюм"), action("подобрать туфли"), action("точка"))
     ]
 
     let pm = productionModel(input, rules)
 
-    pm.iterate()
-    pm.iterate()
-    pm.iterate()
-
+    pm.solve()
 
     console.log(pm)
 

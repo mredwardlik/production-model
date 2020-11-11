@@ -9,17 +9,21 @@
  */
 
 /**
- * Get flattened array
- * @param {Array} items - Set of homogenous elements
- * @param {Function} callback - Аdditional processing of array elements
- * @throws {Error} Argument is not an array
- * @returns {Array} Flattened array
+ * Get flattened array.
+ * @param {Array} items - Set of homogenous elements.
+ * @param {Function} callback - Аdditional processing of array elements.
+ * @throws {Error} The argument is not an array.
+ * @returns {Array} Flattened array.
  */
 function flat(items, callback = null) {
-    if (!Array.isArray(items)) throw new Error("The argument is not an array")
+    if (!Array.isArray(items)) throw new Error("The argument is not an array.")
     if (!items || items == []) return 0
     items = items.flat(Infinity)
-    if (callback != null) items.forEach((item, i, arr) => callback(item, i, arr))
+    if (callback != null) items.every((item, i, arr) => {
+        let result = callback(item, i, arr)
+        if (typeof result === 'undefined' || result === true) return true
+        return false
+    })
     return items
 }
 
@@ -41,6 +45,7 @@ class Rule {
     /**
      * Append actions as a set of conclusions
      * @param {...Action} conclusions - Actions that must be performed
+     * @throws {Error} The conclusion cannot be instance of ${typeof conclusion}
      */
     then(...conclusions) {
         flat(conclusions, conclusion => {
@@ -61,6 +66,28 @@ class Rule {
             if (!(this.conditions.includes(condition))) this.conditions.push(condition)
         })
         return this
+    }
+
+    /**
+     * Perform all conclusions if the conditions are enough
+     * @param {...Action} conditions 
+     */
+    perform(...conditions) {
+        if (!(this.isPerformed(...conditions))) return false
+        this.conclusions.forEach(conclusion => {
+            conclusion.perform()
+        })
+        return this.conclusions
+    }
+
+    isPerformed(...conditions) {
+        let allow = true
+        flat(conditions, condition => {
+            if (!(this.conditions.includes(condition))) {
+                return allow = false
+            }
+        })
+        return allow
     }
 
     toString() {
@@ -91,7 +118,7 @@ class Cache {
      * Add actions to the cache container
      * @param {(Action[]|Action)} actions 
      * @throws {Error} The array must only consist of Action
-     * @returns {boolean} True if actions were added to the cache container
+     * @returns {boolean} if actions were appended to the cache container then return true
      */
     add(...actions) {
         flat(actions, action => {
@@ -104,7 +131,7 @@ class Cache {
     /**
      * Remove actions from the end of the contrainer
      * @param {number} [count=1] Remove a few actions if needed
-     * @returns {boolean} If the removing was successful return true, otherwise false 
+     * @returns {boolean} If the removing was successful then return true, otherwise false 
      */
     remove(count = 1) {
         let action = myFish.splice(myFish.length - 1, count)
@@ -112,7 +139,6 @@ class Cache {
     }
 
 }
-
 
 /**
  * Event, act or something else that used as a conclusion
@@ -131,17 +157,17 @@ class Action {
         this.callback = null
     }
 
-    _perform() {
-        this.callback()
-        this._count--
+    perform() {
+        if (this.callback != null) for (let i = 0; i < this._count; i++) this.callback(this.name, this.names.slice())
     }
 
     /**
      * Save user's function as performing action
      * @param {Function} [callback=null] callback - User's function
      */
-    perform(callback = null) {
+    do(callback = null) {
         this.callback = callback
+        return this
     }
 
     /**
@@ -150,10 +176,10 @@ class Action {
      */
     count(count = 1) {
         this._count = count
+        return this
     }
 
 }
-
 
 /**
  * Factory for controlled creation of actions
@@ -192,7 +218,7 @@ class ActionFactory {
      */
     add(...names) {
         flat(names, name => {
-            if (typeof name !== "string") throw new Error("The names must be string")
+            if (typeof name !== "string") throw new Error('The names must be string.')
             if (!(this.names.includes(name))) this.names.push(name)
         })
         return true
@@ -201,14 +227,13 @@ class ActionFactory {
     /**
      * Check type and find a name in registered list of names
      * @param {string} name - Action name
-     * @return {boolean} If registered names list has the name return true, otherwise false
+     * @return {boolean} If registered names list has the name then return true, otherwise false
      */
     check(name) {
         return (typeof name == "string" && this.names.includes(name)) ? true : false
     }
 
 }
-
 
 /**
  * The main class of the library
@@ -220,31 +245,49 @@ class ProductionModel {
      * @param {(Action[]|Action)} inputs - Initial cache state
      * @param {(Rule[]|Rule)} rules - Set of rules
      */
-    constructor(inputs, rules) {
+    constructor(inputs, rules, head = 0, iteration = 0) {
         this.rules = []
-        this.caches = []
+        this.pending = []
+        this.current = null
+        this.iteration = iteration
 
-        this.caches.push(new Cache(inputs))
+        this.cache = new Cache(inputs)
         this.ruling(rules)
+
+        this.snapshots = []
+    }
+
+    snapshot() {
+        this.snapshots.push(JSON.parse(JSON.stringify(this)))
+        delete this.snapshots[this.snapshots.length - 1].snapshots
     }
 
     /**
-     * 
-     * @param {...Rule} rules - Set of rules
-     * @throws {Error} Argument is not an array or empty
-     * @throws {Error} Array has no rules
-     * @returns {boolean} If the rules adding was successful return true, otherwise false
+     * Set rules.
+     * @param {...Rule} rules - Set of rules.
+     * @throws {Error} The array must only consist of Rule.
+     * @returns {boolean} If the rules setting was successful return true.
      */
     ruling(...rules) {
         flat(rules, rule => {
-            if (!(rule instanceof Rule)) throw new Error(`The array must only consist of Rule`)
+            if (!(rule instanceof Rule)) throw new Error('The array must only consist of Rule.')
             this.rules.push(rule)
+            this.pending.push(rule)
         })
         return true
     }
 
     step() {
+        if (this.pending == []) return false
+        this.snapshot()
+        /**
+         * Need to code
+         */
+    }
 
+    iterate() {
+        let iteration = this.iteration
+        while(this.iteration == iteration) this.step()
     }
 
 }
@@ -293,21 +336,26 @@ window.onload = function () {
     ])
 
     let input = [
-        action("сделать макияж"),
         action("идти на концерт")
     ]
 
     let rules = [
         perform(action("пригласить подругу")).if(action("идти на концерт")),
-        perform(action("пригласить подругу")).if(action("идти на концерт"), action("освободить вечер")),
+        perform(action("подготовить костюм")).if(action("идти на концерт"), action("освободить вечер")),
         perform(action("купить билеты")).if(action("идти на концерт"), action("пригласить подругу")),
         perform(action("подобрать туфли")).if(action("подготовить костюм")),
         perform(action("освободить вечер")).if(action("купить билеты")),
         perform(action("настроение отличное")).if(action("идти на концерт"), action("пригласить подругу"), action("сделать макияж")),
         perform(action("сделать макияж")).if(action("идти на концерт"), action("подготовить костюм"), action("подобрать туфли"))
     ]
-    
+
     let pm = productionModel(input, rules)
 
-    console.log( perform(action("сделать макияж"), action("подготовить костюм")).if(action("идти на концерт"), action("подобрать туфли")).toString() )
+    pm.iterate()
+    pm.iterate()
+    pm.iterate()
+
+
+    console.log(pm)
+
 }

@@ -1,0 +1,36 @@
+{
+  "name": "production-model",
+  "version": "1.0.0",
+  "author": {
+    "name": "Lik Eduard",
+    "email": "feft99@gmail.com"
+  },
+  "license": "MIT",
+  "description": "This package helps to build a production model.",
+  "keywords": [
+    "model",
+    "rule",
+    "conclusion",
+    "condition",
+    "action"
+  ],
+  "scripts": {
+    "dev": "webpack --mode development",
+    "prod": "webpack --mode production",
+    "watch": "webpack watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/feftio/production-model.git"
+  },
+  "bugs": {
+    "url": "https://github.com/feftio/production-model/issues"
+  },
+  "homepage": "https://github.com/feftio/production-model#readme",
+  "devDependencies": {
+    "html-webpack-plugin": "^4.5.0",
+    "webpack": "^5.4.0",
+    "webpack-cli": "^4.2.0",
+    "webpack-dev-server": "^3.11.0"
+  }
+}

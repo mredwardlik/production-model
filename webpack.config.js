@@ -1,5 +1,5 @@
 const path = require('path')
-const html = require('html-webpack-plugin')
+const HTMLWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
     mode: "production",
@@ -9,8 +9,9 @@ module.exports = {
         filename: 'production-model.js'
     },
     plugins: [
-        new html({
-            template: './src/template.html'
+        new HTMLWebpackPlugin({
+            template: './src/template.html',
+            favicon: './src/favicon.ico'
         })
     ]
 }

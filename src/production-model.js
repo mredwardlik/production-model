@@ -211,9 +211,9 @@ class ActionFactory {
     }
 
     /**
-     * Add registered names for store
-     * @param {boolean} names - Registered names
-     * @returns {boolean} If the adding was successful return true, otherwise false
+     * Add registered names for store.
+     * @param {boolean} names - Registered names.
+     * @returns {boolean} If the adding was successful return true, otherwise false.
      */
     add(...names) {
         flat(names, name => {
@@ -224,9 +224,9 @@ class ActionFactory {
     }
 
     /**
-     * Check type and find a name in registered list of names
-     * @param {string} name - Action name
-     * @return {boolean} If registered names list has the name then return true, otherwise false
+     * Check type and find a name in registered list of names.
+     * @param {string} name - Action name.
+     * @return {boolean} If registered names list has the name then return true, otherwise false.
      */
     check(name) {
         return (typeof name == 'string' && this.names.includes(name)) ? true : false
@@ -235,17 +235,22 @@ class ActionFactory {
 }
 
 /**
- * The main class of the library
+ * The main class of the library.
  */
 class ProductionModel {
 
     /**
-     * Initialize properties
-     * @param {(Action[]|Action)} inputs - Initial cache state
-     * @param {(Rule[]|Rule)} rules - Set of rules
+     * Initialize properties.
+     * @param {(Action[]|Action)} inputs - Initial cache state.
+     * @param {(Rule[]|Rule)} rules - Set of rules.
      */
     constructor(inputs, rules, iteration = 1, head = -1) {
+        /**
+         * Set of rules.
+         * @type {Rule[]}
+         */
         this.rules = []
+
         this.performed = []
         this.head = head
         this.iteration = iteration
@@ -270,11 +275,18 @@ class ProductionModel {
         return true
     }
 
+    /**
+     * Make a snapshot.
+     */
     snapshot() {
         this.snapshots.push(JSON.parse(JSON.stringify(this)))
         delete this.snapshots[this.snapshots.length - 1].snapshots
     }
 
+    /**
+     * Get next head to perform rule
+     * @param {number} head - Number of current rule.
+     */
     next(head) {
         if (this.isLast(head)) {
             this.iteration += 1
@@ -284,6 +296,10 @@ class ProductionModel {
         return head + 1
     }
 
+    /**
+     * Check if current rule is the last one in list.
+     * @param {number} head - Number of current rule.
+     */
     isLast(head) {
         if (head + 1 >= this.rules.length) return true
         if (this.performed.includes(head + 1)) return this.isLast(head + 1)
@@ -314,7 +330,7 @@ class ProductionModel {
 }
 
 /**
- * Wrapper. Get a new rule object
+ * Wrapper. Get a new rule object.
  * @param {(Action[]|Action)} conclusions - Action that will be executed if ...
  * @returns {Rule} 
  */
@@ -323,18 +339,18 @@ function perform(...conclusions) {
 }
 
 /**
- * Wrapper. Get a new factory for creaing new actions
- * @param {Action[]} actions - Set of action for check correct use
+ * Wrapper. Get a new factory for creaing new actions.
+ * @param {Action[]} actions - Set of action for check correct use.
  */
 function register(actions) {
     return new ActionFactory(actions)
 }
 
 /**
- * Wrapper. The main function of the library
- * @param {(Action[]|Action)} inputs - Initial cache state
- * @param {(Rule[]|Rule)} rules - Set of rules
- * @returns {ProductionModel} The main class in the library
+ * Wrapper. The main function of the library.
+ * @param {(Action[]|Action)} inputs - Initial cache state.
+ * @param {(Rule[]|Rule)} rules - Set of rules.
+ * @returns {ProductionModel} The main class in the library.
  */
 function productionModel(inputs, rules) {
     return new ProductionModel(inputs, rules)

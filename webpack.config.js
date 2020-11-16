@@ -1,17 +1,31 @@
 const path = require('path')
-const HTMLWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
-    mode: "production",
-    entry: "./src/production-model.js",
+    mode: 'development',
+    watch: false,
+    context: path.resolve(__dirname, 'src'),
+    entry: './production-model.js',
     output: {
-        path: path.resolve(__dirname, 'dist'),
+        path: path.resolve(__dirname, 'lib'),
         filename: 'production-model.js'
     },
-    plugins: [
-        new HTMLWebpackPlugin({
-            template: './src/template.html',
-            favicon: './src/favicon.ico'
-        })
-    ]
-}
+    module: {
+        rules: [
+            {
+                test: /\.css$/,
+                use: ['style-loader', 'css-loader']
+            },
+            {
+                test: /\.m?js$/,
+                exclude: /node_modules/,
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        presets: ['@babel/preset-env']
+                    }
+                }
+            }
+        ]
+    }
+}    
+

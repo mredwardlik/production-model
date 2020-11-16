@@ -5,7 +5,6 @@
     "name": "Lik Eduard",
     "email": "feft99@gmail.com"
   },
-  "license": "MIT",
   "description": "This package helps to build a production model.",
   "keywords": [
     "model",
@@ -15,9 +14,10 @@
     "action"
   ],
   "scripts": {
-    "dev": "webpack --mode development",
-    "prod": "webpack --mode production",
-    "watch": "webpack watch"
+    "d": "webpack --mode development",
+    "p": "webpack --mode production",
+    "w": "webpack --watch",
+    "s": "webpack"
   },
   "repository": {
     "type": "git",
@@ -28,7 +28,11 @@
   },
   "homepage": "https://github.com/feftio/production-model#readme",
   "devDependencies": {
-    "html-webpack-plugin": "^4.5.0",
+    "@babel/core": "^7.12.3",
+    "@babel/preset-env": "^7.12.1",
+    "babel-loader": "^8.2.1",
+    "css-loader": "^5.0.1",
+    "style-loader": "^2.0.0",
     "webpack": "^5.4.0",
     "webpack-cli": "^4.2.0",
     "webpack-dev-server": "^3.11.0"

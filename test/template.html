@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Test template for Production Model Package">
+  <meta name="author" content="Lik Eduard">
+  <title>Testing</title>
+</head>
+<body>
+  <div class="wrapper"> 
+  </div>
+<script src="../lib/production-model.min.js"></script>
+<script>
+// window.onload = function () {
+
+//     let action = register([
+//         "пригласить подругу",
+//         "подготовить костюм",
+//         "купить билеты",
+//         "подобрать туфли",
+//         "освободить вечер",
+//         "настроение отличное",
+//         "сделать макияж",
+//         "идти на концерт",
+//     ])
+
+//     let input = [
+//         action("идти на концерт")
+//     ]
+
+//     let rules = [
+//         perform(action("пригласить подругу")).if(action("идти на концерт")),
+//         perform(action("подготовить костюм")).if(action("идти на концерт"), action("освободить вечер")),
+//         perform(action("купить билеты")).if(action("идти на концерт"), action("пригласить подругу")),
+//         perform(action("подобрать туфли")).if(action("подготовить костюм")),
+//         perform(action("освободить вечер")).if(action("купить билеты")),
+//         perform(action("настроение отличное")).if(action("идти на концерт"), action("пригласить подругу"), action("сделать макияж")),
+//         perform(action("сделать макияж")).if(action("идти на концерт"), action("подготовить костюм"), action("подобрать туфли"))
+//     ]
+
+//     let pm = productionModel(input, rules)
+
+//     pm.step()
+
+//     console.log(pm)
+// }
+</script>
+</body>
+</html>

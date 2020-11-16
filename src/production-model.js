@@ -8,24 +8,8 @@
  * 
  */
 
-/**
- * Get flattened array.
- * @param {Array} items - Set of homogenous elements.
- * @param {Function} callback - Аdditional processing of array elements.
- * @throws {Error} The argument is not an array.
- * @returns {Array} Flattened array.
- */
-function flat(items, callback = null) {
-    if (!Array.isArray(items)) throw new Error('The argument is not an array.')
-    if (!items || items == []) return 0
-    items = items.flat(Infinity)
-    if (callback != null) items.every((item, i, arr) => {
-        let result = callback(item, i, arr)
-        if (typeof result === 'undefined' || result === true) return true
-        return false
-    })
-    return items
-}
+import './assets/style.css'
+import flat from './utils'
 
 /**
  * The class which stores conclusions and conditions.
@@ -70,7 +54,7 @@ class Rule {
 
     /**
      * Perform all conclusions if the conditions are enough.
-     * @param {...Action} conditions 
+     * @param {...Action} conditions - Actions that must be performed.
      */
     perform(...conditions) {
         if (!this.isPerformed(...conditions)) return false
@@ -80,6 +64,10 @@ class Rule {
         return this.conclusions
     }
 
+    /**
+     * Check rule if enough conditions to perform.
+     * @param  {...Action} conditions - Actions that must be performed.
+     */
     isPerformed(...conditions) {
         let allow = 0
         flat(conditions, condition => {
@@ -88,6 +76,10 @@ class Rule {
         return this.conditions.length <= allow
     }
 
+    /**
+     * Print out the rule
+     * @returns {string} "If Else" string with conditions and conslusions.
+     */
     toString() {
         let string = 'Если '
         this.conditions.forEach((item, i, arr) => string += (i != arr.length - 1) ? `${item.name} и ` : `${item.name}, `)
@@ -354,68 +346,4 @@ function register(actions) {
  */
 function productionModel(inputs, rules) {
     return new ProductionModel(inputs, rules)
-}
-
-/**
- * Testing
- */
-window.onload = function () {
-
-    let action = register([
-        "пригласить подругу",
-        "подготовить костюм",
-        "купить билеты",
-        "подобрать туфли",
-        "освободить вечер",
-        "настроение отличное",
-        "сделать макияж",
-        "идти на концерт",
-    ])
-
-    let input = [
-        action("идти на концерт")
-    ]
-
-    let rules = [
-        perform(action("пригласить подругу")).if(action("идти на концерт")),
-        perform(action("подготовить костюм")).if(action("идти на концерт"), action("освободить вечер")),
-        perform(action("купить билеты")).if(action("идти на концерт"), action("пригласить подругу")),
-        perform(action("подобрать туфли")).if(action("подготовить костюм")),
-        perform(action("освободить вечер")).if(action("купить билеты")),
-        perform(action("настроение отличное")).if(action("идти на концерт"), action("пригласить подругу"), action("сделать макияж")),
-        perform(action("сделать макияж")).if(action("идти на концерт"), action("подготовить костюм"), action("подобрать туфли"))
-    ]
-
-    let pm = productionModel(input, rules)
-    console.log(pm)
-
-    // let action = register([
-    //     "место рыбалки - река",
-    //     "использовать удочку",
-    //     "можно поймать - рыбу",
-    //     "можно сварить уху",
-    //     "нужна наживка",
-    //     "лето",
-    //     "можно поехать на рыбалку",
-    //     "можно неплохо отдохнуть"
-    // ])
-
-    // let rules = [
-    //     perform(action("использовать удочку")).if(action("место рыбалки - река")),
-    //     perform(action("можно сварить уху")).if(action("можно поймать - рыбу")),
-    //     perform(action("нужна наживка")).if(action("место рыбалки - река")),
-    //     perform(action("можно поехать на рыбалку")).if(action("лето")),
-    //     perform(action("можно поймать - рыбу")).if(action("место рыбалки - река")),
-    //     perform(action("место рыбалки - река")).if(action("можно поехать на рыбалку")),
-    //     perform(action("можно неплохо отдохнуть")).if(action("можно сварить уху"))
-    // ]
-
-    // let inputs = [
-    //     action("место рыбалки - река")
-    // ]
-
-    // let pm = new ProductionModel(inputs, rules)
-    // pm.iterate()
-    // console.log(pm)
-
 }

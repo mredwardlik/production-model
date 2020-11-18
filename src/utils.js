@@ -5,7 +5,7 @@
  * @throws {Error} The argument is not an array.
  * @returns {Array} Flattened array.
  */
-export default function flat(items, callback = null) {
+export function flat(items, callback = null) {
     if (!Array.isArray(items)) throw new Error('The argument is not an array.')
     if (!items || items == []) return items
     items = items.flat(Infinity)

@@ -1,4 +1,4 @@
-import flat from './Utils'
+import { flat } from './Utils'
 import Action from './Action'
 
 /**
@@ -10,10 +10,10 @@ export default class Rule {
      * Initialize conclusions and conditions arrays.
      * @param {...Action} conclusions - Actions that must be performed.
      */
-    constructor(callback) {
+    constructor(actionWrapper) {
         this.conditions = []
         this.conclusions = []
-        this.wrapper = callback
+        this.actionWrapper = actionWrapper
     }
 
     /**
@@ -23,7 +23,7 @@ export default class Rule {
      */
     if(...conditions) {
         flat(conditions, condition => {
-            if (typeof condition == 'string') condition = this.wrapper(condition)
+            if (typeof condition == 'string') condition = this.actionWrapper(condition)
             if (!(condition instanceof Action)) throw new Error(`The condition cannot be instance of ${typeof condition}`)
             if (!this.conditions.includes(condition)) this.conditions.push(condition)
         })
@@ -37,7 +37,7 @@ export default class Rule {
      */
     then(...conclusions) {
         flat(conclusions, conclusion => {
-            if (typeof conclusion == 'string') conclusion = this.wrapper(conclusion)
+            if (typeof conclusion == 'string') conclusion = this.actionWrapper(conclusion)
             if (!(conclusion instanceof Action)) throw new Error(`The conclusion cannot be instance of ${typeof conclusion}`)
             if (!this.conclusions.includes(conclusion)) this.conclusions.push(conclusion)
         })
@@ -76,7 +76,7 @@ export default class Rule {
         let string = 'If '
         this.conditions.forEach((item, i, arr) => string += (i != arr.length - 1) ? `${item.name} and ` : `${item.name}, `)
         string += 'then '
-        this.conclusions.forEach((item, i, arr) => string += (i != arr.length - 1) ? `${item.name} and ` : `${item.name}. `)
+        this.conclusions.forEach((item, i, arr) => string += (i != arr.length - 1) ? `${item.name} and ` : `${item.name}.`)
         return string
     }
 

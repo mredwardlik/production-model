@@ -7,50 +7,52 @@
  * 
  */
 
-//import './assets/style.css'
+//import './style.css'
 import ActionFactory from './ActionFactory'
 import RuleFactory from './RuleFactory'
+import Memory from './Memory'
+import Worker from './Worker'
 
 class ProductionModel {
 
     constructor() {
         this.actionFactory = new ActionFactory()
-        this.ruleFactory = new RuleFactory((name) => this.actionFactory.create(name))
+        this.ruleFactory = new RuleFactory(this.actionFactory.getWrapper())
+        this.memory = new Memory(this.actionFactory.getWrapper())
     }
 
-    setActions(...names) {
+    /**
+     * Add new actions in production model for the next checks.
+     * @param {...string} names 
+     */
+    registerActions(...names) {
         this.actionFactory.addNames(...names)
     }
 
-    setRules(callback) {
-        callback(
+    setup(callback) {
+        this.memory.add(callback(
             (...conditions) => this.ruleFactory.create(...conditions),
-            (name) => this.actionFactory.create(name)
-        )
+            (name) => this.actionFactory.create(name),
+            this.memory
+        ))
     }
 
+    stringRules() {
+        return this.ruleFactory.getCreated().map((rule) => {
+            return rule.toString()
+        })
+    }
+
+    getWorker() {
+        return new Worker(this.ruleFactory.getCreated(), this.memory)
+    }
 }
 
-// /**
-//  * Wrapper. Get a new rule object.
-//  * @param {(Action[]|Action)} conclusions - Action that will be executed if ...
-//  * @returns {Rule} 
-//  */
-// function perform(...conclusions) {
-//     return new Rule(...conclusions)
-// }
-
-// /**
-//  * Wrapper. Get a new factory for creaing new actions.
-//  * @param {Action[]} actions - Set of action for check correct use.
-//  */
-// function register(actions) {
-//     return new ActionFactory(actions)
-// }
+export default ProductionModel
 
 let productionModel = new ProductionModel()
 
-productionModel.setActions([
+productionModel.registerActions([
     "be a programmer",
     "go to study",
     "get money",
@@ -58,11 +60,15 @@ productionModel.setActions([
     "live well"
 ]),
 
-productionModel.setRules((If, action) => {
-    If("go to study").then("be a programmer"),
-    If("be a programmer").then("get money"),
+productionModel.setup((If) => {
+    If("go to study").then("be a programmer")
+    If("be a programmer", "go to study").then("get money"),
     If("get money").then("find a girl"),
-    If("live well").then("live well")
+    If("find a girl").then("live well"),
+    If("live well").then("go to study")
+
+    return ["get money"]
 })
 
-console.log(productionModel)
+let worker = productionModel.getWorker()
+console.log(worker)

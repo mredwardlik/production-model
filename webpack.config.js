@@ -7,7 +7,10 @@ module.exports = {
     entry: './ProductionModel.js',
     output: {
         path: path.resolve(__dirname, 'lib'),
-        filename: 'production-model.min.js'
+        filename: 'production-model.min.js',
+        libraryExport: 'default',
+        libraryTarget: 'umd',
+        library: 'ProductionModel'
     },
     module: {
         rules: [
@@ -21,7 +24,8 @@ module.exports = {
                 use: {
                     loader: 'babel-loader',
                     options: {
-                        presets: ['@babel/preset-env']
+                        presets: ['@babel/preset-env'],
+                        plugins: ['@babel/plugin-proposal-class-properties']
                     }
                 }
             }

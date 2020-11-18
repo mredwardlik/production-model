@@ -1,4 +1,4 @@
-import flat from './Utils'
+import { flat } from './Utils'
 import Action from './Action'
 
 /**
@@ -13,7 +13,7 @@ export default class ActionFactory {
      */
     constructor() {
         this.names = []
-        this.used = {}
+        this.created = []
     }
 
     /**
@@ -23,10 +23,15 @@ export default class ActionFactory {
      * @returns {Action} A new or already created action.
      */
     create(name) {
-        if (!this.checkName(name)) throw Error(`Can't find "${name}" in regester action list. Add "${name}" to register action list or correct the action name.`)
-        if (this.used[name]) return this.used[name]
-        this.used[name] = new Action(name, this.names)
-        return this.used[name]
+        if (!this.names.includes(name)) throw Error(`Can't find "${name}" in registered action list. Register "${name}" as an action or correct the action name.`)
+        let actionIndex = this.created.findIndex(action => action.name == name)
+        if (actionIndex >= 0) return this.created[actionIndex]
+        this.created.push(new Action(name, this.names))
+        return this.created[this.created.length - 1]
+    }
+
+    getWrapper() {
+        return name => this.create(name)
     }
 
     /**
@@ -40,15 +45,6 @@ export default class ActionFactory {
             if (!this.names.includes(name)) this.names.push(name)
         })
         return true
-    }
-
-    /**
-     * Check type and find a name in registered list of names.
-     * @param {string} name - Action name.
-     * @return {boolean} If registered names list has the name then return true, otherwise false.
-     */
-    checkName(name) {
-        return (typeof name == 'string' && this.names.includes(name)) ? true : false
     }
 
 }

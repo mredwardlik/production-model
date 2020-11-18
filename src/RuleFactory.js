@@ -1,5 +1,3 @@
-import flat from './Utils'
-import Action from './Action'
 import Rule from './Rule'
 
 /**
@@ -7,25 +5,23 @@ import Rule from './Rule'
  */
 export default class RuleFactory {
 
-    constructor(callback) {
+    constructor(actionWrapper) {
         this.rules = []
-        this.wrapper = callback
+        this.actionWrapper = actionWrapper
     }
     
+    /**
+     * Create a new rule, save and return it out.
+     * @param  {(...Action|...string)} conditions 
+     */
     create(...conditions) {
-        let rule = new Rule(this.wrapper).if(...conditions)
+        let rule = new Rule(this.actionWrapper).if(...conditions)
         this.rules.push(rule)
         return rule
-        //return this.wrap(rule.if, rule.then)
     }
 
-    wrap(_if, _then) {
-        return {
-            IF: _if,
-            if: _if,
-            THEN: _then,
-            then: _then
-        }
+    getCreated() {
+        return this.rules
     }
 
 }

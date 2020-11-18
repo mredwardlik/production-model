@@ -4,10 +4,10 @@ module.exports = {
     mode: 'development',
     watch: false,
     context: path.resolve(__dirname, 'src'),
-    entry: './production-model.js',
+    entry: './ProductionModel.js',
     output: {
         path: path.resolve(__dirname, 'lib'),
-        filename: 'production-model.js'
+        filename: 'production-model.min.js'
     },
     module: {
         rules: [

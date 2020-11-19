@@ -2,6 +2,8 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: 'Ubuntu', sans-serif;
+    color: rgb(255, 255, 255);
 }
 
 .wrapper {
@@ -9,16 +11,43 @@
     width: 100vw;
     height: 100vh;
     padding: 40px;
+    margin: auto;
     justify-content: center;
     align-items: center;
-    background-color: rgb(177, 231, 186);
+    background: #1f253d;
+    overflow: auto;
 }
 
 .container {
     display: block;
-    width: 800px;
+    width: 900px;
     height: 500px;
     margin: auto 0;
-    background-color: rgba(120, 202, 171, 0.5);
-    border-radius: 20px;
 }
+
+.panel {
+    display: flex;
+    width: 100%;
+    border: 1px solid black;
+    justify-content: space-around;
+    align-items: flex-start;
+}
+
+.block {
+    background: #394264;
+    border-radius: 5px;
+    margin: 20px;
+}
+
+.rules {
+    flex: 1 4 600px;
+    height: 350px;
+    min-width: 200px;
+}
+
+.memory {
+    flex: 1 2 200px;
+    min-width: 200px;
+    height: 300px;
+}
+

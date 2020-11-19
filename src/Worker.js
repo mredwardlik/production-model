@@ -1,7 +1,5 @@
 import Rule from './Rule'
 import Action from './Action'
-import Memory from './Memory'
-import { flat } from './Utils'
 
 /**
  * The main class of the library.

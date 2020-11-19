@@ -19,6 +19,7 @@ class ProductionModel {
         this.actionFactory = new ActionFactory()
         this.ruleFactory = new RuleFactory(this.actionFactory.getWrapper())
         this.memory = new Memory(this.actionFactory.getWrapper())
+        this.worker = new Worker()
     }
 
     /**
@@ -29,7 +30,7 @@ class ProductionModel {
         this.actionFactory.addNames(...names)
     }
 
-    setup(callback) {
+    setState(callback) {
         this.memory.add(callback(
             (...conditions) => this.ruleFactory.create(...conditions),
             (name) => this.actionFactory.create(name),
@@ -43,24 +44,18 @@ class ProductionModel {
         })
     }
 
-    getWorker() {
-        return new Worker(this.ruleFactory.getCreated(), this.memory)
+    solve() {
+        
     }
 }
 
 export default ProductionModel
 
-let productionModel = new ProductionModel()
+let pm = new ProductionModel()
 
-productionModel.registerActions([
-    "be a programmer",
-    "go to study",
-    "get money",
-    "find a girl",
-    "live well"
-]),
+pm.registerActions("be a programmer", "go to study", "get money", "find a girl", "live well")
 
-productionModel.setup((If) => {
+pm.setState((If) => {
     If("go to study").then("be a programmer")
     If("be a programmer", "go to study").then("get money"),
     If("get money").then("find a girl"),
@@ -70,5 +65,4 @@ productionModel.setup((If) => {
     return ["get money"]
 })
 
-let worker = productionModel.getWorker()
-console.log(worker)
+let result = pm.solve()

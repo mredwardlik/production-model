@@ -73,10 +73,10 @@ export default class Rule {
      * @returns {string} "If then" string with conditions and conslusions.
      */
     toString() {
-        let string = 'If '
-        this.conditions.forEach((item, i, arr) => string += (i != arr.length - 1) ? `${item.name} and ` : `${item.name}, `)
-        string += 'then '
-        this.conclusions.forEach((item, i, arr) => string += (i != arr.length - 1) ? `${item.name} and ` : `${item.name}.`)
+        let string = 'Если '
+        this.conditions.forEach((item, i, arr) => string += (i != arr.length - 1) ? `${item.name} и ` : `${item.name}, `)
+        string += 'то '
+        this.conclusions.forEach((item, i, arr) => string += (i != arr.length - 1) ? `${item.name} и ` : `${item.name}.`)
         return string
     }
 

@@ -4,7 +4,7 @@ import Action from './Action'
 /**
  * The main class of the library.
  */
-export default class Worker {
+export default class Solver {
 
     /**
      * Initialize properties.
@@ -19,9 +19,11 @@ export default class Worker {
         this.rules = rules
         this.performed = []
         this.memory = memory
+        this.performing = false
+        this.currentAction = null
 
         this.head = -1
-        this.iteration = 1
+        this.iteration = 0
         this.snapshots = []
     }
 
@@ -61,12 +63,17 @@ export default class Worker {
      * @returns {boolean} true if performed are filled.
      */
     step() {
-        if (this.rules.length == this.performed.length || this.iteration >= this.rules.length) return true
+        this.performing = false
+        this.currentAction = null
+        if (this.rules.length == this.performed.length) return true
+        if (this.iteration >= this.rules.length) return false
         this.head = this.getNext(this.head)
         let conclusions = this.rules[this.head].perform(this.memory.container)
         if (Array.isArray(conclusions) && conclusions != []) {
             this.memory.add(conclusions)
             this.performed.push(this.head)
+            this.performing = true
+            this.currentAction = conclusions
         }
         this.snapshot()
         return this

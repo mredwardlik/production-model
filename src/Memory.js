@@ -30,12 +30,16 @@ export default class Memory {
         })
     }
 
+    get(name) {
+        for (let i = 0; i < this.container.length; i++) if (this.container[i].name == name) return this.container[i]
+    }
+
     /**
      * Remove actions from the end of the contrainer.
      * @param {number} [count=1] Remove a few actions if needed.
      * @returns {boolean} If the removing was successful then return true, otherwise false.
      */
-    remove(count = 1) {
+    removeLast(count = 1) {
         let action = myFish.splice(myFish.length - 1, count)
         return action ? true : false
     }

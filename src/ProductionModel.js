@@ -11,7 +11,8 @@
 import ActionFactory from './ActionFactory'
 import RuleFactory from './RuleFactory'
 import Memory from './Memory'
-import Worker from './Worker'
+import Solver from './Solver'
+import SolverHTML from './SolverHTML'
 
 class ProductionModel {
 
@@ -19,7 +20,6 @@ class ProductionModel {
         this.actionFactory = new ActionFactory()
         this.ruleFactory = new RuleFactory(this.actionFactory.getWrapper())
         this.memory = new Memory(this.actionFactory.getWrapper())
-        this.worker = new Worker()
     }
 
     /**
@@ -44,25 +44,41 @@ class ProductionModel {
         })
     }
 
-    solve() {
-        
+    getSolverHTML(options) {
+        return new SolverHTML(this.ruleFactory.getCreated(), this.memory, options)
+    }
+
+    solver() {
+        return new Solver(this.ruleFactory.getCreated(), this.memory)
     }
 }
 
 export default ProductionModel
 
-let pm = new ProductionModel()
+// let pm = new ProductionModel()
 
-pm.registerActions("be a programmer", "go to study", "get money", "find a girl", "live well")
+// pm.registerActions("be a programmer", "go to study", "get money", "find a girl", "live well")
 
-pm.setState((If) => {
-    If("go to study").then("be a programmer")
-    If("be a programmer", "go to study").then("get money"),
-    If("get money").then("find a girl"),
-    If("find a girl").then("live well"),
-    If("live well").then("go to study")
+// pm.setState((If) => {
+//     If("go to study").then("be a programmer")
+//     If("be a programmer", "go to study").then("get money"),
+//     If("get money").then("find a girl"),
+//     If("find a girl").then("live well"),
+//     If("live well").then("go to study")
 
-    return ["get money"]
-})
+//     return ["get money"]
+// })
 
-let result = pm.solve()
+// // pm.solveHTML({
+// //     rules: "rules",
+// //     memory: "memory",
+// //     iterations: "",
+// //     head: ""
+// // })
+
+// pm.solveHTML({
+//     rules: "rules",
+//     memory: "memory",
+//     iterations: "",
+//     head: ""
+// }).solve()

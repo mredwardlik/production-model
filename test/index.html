@@ -13,18 +13,62 @@
 <body>
     <div class="wrapper">
         <div class="container">
+
             <div class="panel top">
-                <div class="rules block">
+                <div class="block rules">
+                    <h2 class="block-name">Rules</h2>
+                    <ul class="items" id="rules">
+                    </ul>
                 </div>
-                <div class="memory block">
+                <div class="block memory">
+                    <h2 class="block-name">Memory</h2>
+                    <ul class="items" id="memory">
+                    </ul>
                 </div>
             </div>
-            <!--<div class="panel bottom">
 
-            </div>-->
+            <div class="panel bottom">
+                <div class="block buttons">
+                    <a class="button solve" id="solve">Solve</a>
+                    <!-- <a class="button reset" id="reset">Reset</a> -->
+                </div>
+            </div>
+
         </div>
     </div>
 </body>
-
 <script src="../lib/production-model.min.js"></script>
+<script>
+
+let pm = new ProductionModel()
+
+pm.registerActions("be a programmer", "go to study", "get money", "find a girl", "live well")
+
+pm.setState((If) => {
+    If("go to study").then("be a programmer")
+    If("be a programmer").then("get money", "live well"),
+    If("get money").then("find a girl"),
+    If("find a girl").then("live well"),
+    If("live well").then("go to study")
+
+    return ['go to study']
+})
+
+let solver = pm.getSolverHTML({
+    rules: "rules",
+    memory: "memory",
+    iterations: "",
+    head: ""
+})
+
+document.getElementById('solve').addEventListener("click", () => {
+    solver.solve({
+        rules: "rules",
+        memory: "memory",
+        iterations: "",
+        head: ""
+    })
+})
+
+</script>
 </html>

@@ -42,6 +42,7 @@ export default class SolverHTML extends Solver {
     solve() {
         let timer = setInterval(() => {
             let step = this.step()
+            
             if (step == true) {
                 swal("Выполнено!", "Решение:" + this.memory.container[this.memory.container.length - 1].name, "success");
                 clearInterval(timer)
@@ -68,7 +69,7 @@ export default class SolverHTML extends Solver {
                 })
 
             }
-        }, 300)
+        }, 2000)
     }
 
 }

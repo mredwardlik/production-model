@@ -125,7 +125,7 @@ h2 {
 
 .button {
     display: block;
-    width: 300px;
+    width: 100%;
     margin: 0 20px;
     line-height: 50px;
     font-size: 16px;
@@ -157,4 +157,8 @@ h2 {
 
 .crossed {
     text-decoration: line-through;
+}
+
+.head {
+    color: red;
 }

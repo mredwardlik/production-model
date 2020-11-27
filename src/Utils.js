@@ -16,3 +16,7 @@ export function flat(items, callback = null) {
     })
     return items
 }
+
+export function merge(source, target) {
+    return Object.assign(source, target)
+}

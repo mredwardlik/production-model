@@ -6,15 +6,6 @@ import Action from './Action'
  */
 export default class Solver {
 
-    #rules
-    #performed
-    #memory
-    #performing
-    #currentAction
-    #head
-    #iteration
-    #snapshots
-
     /**
      * Initialize properties.
      * @param {(Action[]|Action)} inputs - Initial cache state.
@@ -25,15 +16,15 @@ export default class Solver {
          * Set of rules.
          * @type {Rule[]}
          */
-        this.#rules = rules
+        this.rules = rules
         this.performed = []
-        this.#memory = memory
-        this.#performing = false
-        this.#currentAction = null
+        this.memory = memory
+        this.performing = false
+        this.currentAction = null
 
-        this.#head = -1
-        this.#iteration = 0
-        this.#snapshots = []
+        this.head = -1
+        this.iteration = 0
+        this.snapshots = []
     }
 
     /**
@@ -69,11 +60,12 @@ export default class Solver {
 
     /**
      * Make a step.
-     * @returns {boolean} true if performed are filled.
+     * @returns {(void|boolean)} true if performed are filled, false if have no solution
      */
     step() {
         this.performing = false
         this.currentAction = null
+        if (this.snapshot)
         if (this.rules.length == this.performed.length) return true
         if (this.iteration >= this.rules.length) return false
         this.head = this.getNext(this.head)

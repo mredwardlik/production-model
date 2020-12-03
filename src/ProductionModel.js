@@ -59,31 +59,3 @@ class ProductionModel {
 }
 
 export default ProductionModel
-
-// let pm = new ProductionModel()
-
-// pm.registerActions("be a programmer", "go to study", "get money", "find a girl", "live well")
-
-// pm.setState((If) => {
-//     If("go to study").then("be a programmer")
-//     If("be a programmer", "go to study").then("get money"),
-//     If("get money").then("find a girl"),
-//     If("find a girl").then("live well"),
-//     If("live well").then("go to study")
-
-//     return ["get money"]
-// })
-
-// // pm.solveHTML({
-// //     rules: "rules",
-// //     memory: "memory",
-// //     iterations: "",
-// //     head: ""
-// // })
-
-// pm.solveHTML({
-//     rules: "rules",
-//     memory: "memory",
-//     iterations: "",
-//     head: ""
-// }).solve()

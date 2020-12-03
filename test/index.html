@@ -90,7 +90,7 @@ pm.registerActions([
     "получить хорошие навыки стрельбы"
 ])
 
-pm.setState((If, action) => {
+pm.setState((If, action, memory) => {
     If("работать военным").then("иметь большую зарплату")
     If("работать военным", "много программировать").then("числиться в элитных войсках")
     If("получить дом бесплатно").then("остаться целым и невредимым")
@@ -104,7 +104,7 @@ pm.setState((If, action) => {
     If("стрелять из автомата").then("получить хорошие навыки стрельбы")
     If("получить травмы фаланг").then("остаться целым и невредимым")
 
-    //return ["родные будут рады"]
+    return ["родные будут рады"]
     //return ["работать военным"]
     //return ["работать военным", "получить травмы фаланг"]
     //return ["работать военным", "получить травмы фаланг", "стрелять из автомата"]
@@ -115,11 +115,8 @@ let solver = pm.getSolverHtml({
     memory: "memory",
     iterations: "",
     head: "",
-    speed: 20
+    speed: 1
 })
-
-console.log(solver)
-console.log(solver.step())
 
 document.getElementById('solve').addEventListener("click", () => {
     solver.solve()

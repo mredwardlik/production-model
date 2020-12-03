@@ -18,10 +18,22 @@ module.exports = {
     devtool: 'source-map',
     module: {
         rules: [
+
             {
                 test: /\.css$/,
-                use: ['style-loader', 'css-loader']
+                use: [
+                    'style-loader',
+                    {
+                        loader: 'css-loader',
+                        options: {
+                            modules: {
+                                localIdentName: '[local]-[hash:base64:4]' 
+                            }
+                        }
+                    }
+                ]
             },
+
             {
                 test: /\.m?js$/,
                 exclude: /node_modules/,

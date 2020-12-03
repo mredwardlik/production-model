@@ -6,6 +6,15 @@ import Action from './Action'
  */
 export default class Solver {
 
+    #rules
+    #performed
+    #memory
+    #performing
+    #currentAction
+    #head
+    #iteration
+    #snapshots
+
     /**
      * Initialize properties.
      * @param {(Action[]|Action)} inputs - Initial cache state.
@@ -16,15 +25,15 @@ export default class Solver {
          * Set of rules.
          * @type {Rule[]}
          */
-        this.rules = rules
+        this.#rules = rules
         this.performed = []
-        this.memory = memory
-        this.performing = false
-        this.currentAction = null
+        this.#memory = memory
+        this.#performing = false
+        this.#currentAction = null
 
-        this.head = -1
-        this.iteration = 0
-        this.snapshots = []
+        this.#head = -1
+        this.#iteration = 0
+        this.#snapshots = []
     }
 
     /**

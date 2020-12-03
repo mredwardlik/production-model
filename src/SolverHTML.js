@@ -1,14 +1,24 @@
 import ElementCreator from './ElementCreator'
 import Solver from './Solver'
 import CSS from './style.css'
+import { merge } from './Utils'
 
 let defaultOptions = {
     rules: "",
     memory: "",
     iterations: "",
     ulElement: "",
-    ruleClass: CSS['rule'],
-    actionClass: CSS['action'],
+    classes: {
+        rules: CSS['rules'],
+        memory: CSS['memory'],
+        rule: CSS['rule'],
+        action: CSS['action'],
+        performed: CSS['performed']
+    },
+    prefixes: {
+        rule: 'rule-',
+        action: 'action-'
+    },
     head: "",
     path: "",
     speed: 2,
@@ -16,12 +26,8 @@ let defaultOptions = {
         rule: true,
         action: false
     },
-    onSuccess: function() {
-        console.log("Success")
-    },
-    onError: function() {
-        console.log("Error")
-    }
+    onSuccess: function() { console.log('Success...') },
+    onError: function() { console.log('Error...') }
 }
 
 function prepareOptions(options) {
@@ -32,29 +38,27 @@ export default class SolverHtml {
 
     constructor(rules, memory, options) {
         this.solver = new Solver(rules, memory)
-        this.options = Object.assign(defaultOptions, options)
+        this.options = merge(defaultOptions, options)
         this.elementCreator = new ElementCreator(this.options)
-        this.elements = {
-            rulesSection: document.getElementById(this.options['rules']),
-            memorySection: document.getElementById(this.options['memory']),
-            rules: [],
-            actions: []
-        }
-        this.init()
+        this.memorySectionElement = this.elementCreator.memorySection()
+        this.rulesSectionElement = this.elementCreator.rulesSection()
+        
+        this.#init()
     }
 
-    init() {
+    #init() {
         this.solver.rules.forEach((rule, i) => {
             let ruleElement = this.elementCreator.rule(rule, i + 1)
-            this.elements['rules'].push(ruleElement)
-            this.elements['rulesSection'].appendChild(ruleElement)
+            this.rulesSectionElement.add(ruleElement)
         })
 
         this.solver.memory.container.forEach((action, i) => {
             let actionElement = this.elementCreator.action(action, i + 1)
-            this.elements['actions'].push(actionElement)
-            this.elements['memorySection'].appendChild(actionElement)
+            this.memorySectionElement.add(actionElement)
         })
+
+        document.getElementById(this.options['rules']).appendChild(this.rulesSectionElement.getOrigin())
+        document.getElementById(this.options['memory']).appendChild(this.memorySectionElement.getOrigin())
     }
 
     solve() {
@@ -62,12 +66,24 @@ export default class SolverHtml {
             let step = this.solver.step()
             
             if (step == true) {
-
+                clearInterval(timer)
+                return this.options.onSuccess(step)
             }
 
             if (step == false) {
-                
+                clearInterval(timer)
+                return this.options.onError(step)
             }
+
+            if (step.performing) {
+                console.log(step.head)
+                document.getElementById(this.options.prefixes['rule'] + (step.head + 1)).classList.add(this.options.classes['performed'])
+                this.solver.currentAction.forEach(action => {
+                    let actionElement = this.elementCreator.action(action, this.memorySectionElement.getLength())
+                    this.memorySectionElement.add(this.elementCreator.action(action, this.memorySectionElement.getLength()))
+                })
+            }
+
         }, this.options['speed'] * 1000)
     }
 

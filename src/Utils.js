@@ -17,6 +17,26 @@ export function flat(items, callback = null) {
     return items
 }
 
-export function merge(source, target) {
-    return Object.assign(source, target)
+export function isObject(item) {
+    return (item && typeof item === 'object' && !Array.isArray(item));
+}
+
+export function isArray(item) {
+    return Array.isArray(item)
+}
+
+export function merge(target, ...sources) {
+    if (!sources.length) return target;
+    const source = sources.shift();
+    if (isObject(target) && isObject(source)) {
+        for (const key in source) {
+            if (isObject(source[key])) {
+                if (!target[key]) Object.assign(target, { [key]: {} });
+                merge(target[key], source[key]);
+            } else {
+                Object.assign(target, { [key]: source[key] });
+            }
+        }
+    }
+    return merge(target, ...sources);
 }

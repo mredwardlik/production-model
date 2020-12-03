@@ -17,13 +17,11 @@
             <div class="panel top">
                 <div class="block rules">
                     <h2 class="block-name">Rules</h2>
-                    <ul class="items" id="rules">
-                    </ul>
+                    <div class="items" id="rules"></div>
                 </div>
                 <div class="block memory">
                     <h2 class="block-name">Memory</h2>
-                    <ul class="items" id="memory">
-                    </ul>
+                    <div class="items" id="memory"></div>
                 </div>
             </div>
 
@@ -90,7 +88,7 @@ pm.registerActions([
     "получить хорошие навыки стрельбы"
 ])
 
-pm.setState((If, action, memory) => {
+pm.setState((If) => {
     If("работать военным").then("иметь большую зарплату")
     If("работать военным", "много программировать").then("числиться в элитных войсках")
     If("получить дом бесплатно").then("остаться целым и невредимым")
@@ -104,17 +102,15 @@ pm.setState((If, action, memory) => {
     If("стрелять из автомата").then("получить хорошие навыки стрельбы")
     If("получить травмы фаланг").then("остаться целым и невредимым")
 
-    return ["родные будут рады"]
+    //return ["родные будут рады"]
     //return ["работать военным"]
     //return ["работать военным", "получить травмы фаланг"]
-    //return ["работать военным", "получить травмы фаланг", "стрелять из автомата"]
+    return ["работать военным", "получить травмы фаланг", "стрелять из автомата"]
 })
 
 let solver = pm.getSolverHtml({
     rules: "rules",
     memory: "memory",
-    iterations: "",
-    head: "",
     speed: 1
 })
 

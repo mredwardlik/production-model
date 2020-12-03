@@ -65,7 +65,6 @@ export default class Solver {
     step() {
         this.performing = false
         this.currentAction = null
-        if (this.snapshot)
         if (this.rules.length == this.performed.length) return true
         if (this.iteration >= this.rules.length) return false
         this.head = this.getNext(this.head)

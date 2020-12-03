@@ -40,7 +40,7 @@ export default class Memory {
      * @returns {boolean} If the removing was successful then return true, otherwise false.
      */
     removeLast(count = 1) {
-        let action = myFish.splice(myFish.length - 1, count)
+        let action = this.container.splice(this.container.length - 1, count)
         return action ? true : false
     }
 

@@ -7,7 +7,6 @@
  * 
  */
 
-//import './style.css'
 import ActionFactory from './ActionFactory'
 import RuleFactory from './RuleFactory'
 import Memory from './Memory'

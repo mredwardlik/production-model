@@ -24,7 +24,7 @@ export default class Rule {
     if(...conditions) {
         flat(conditions, condition => {
             if (typeof condition == 'string') condition = this.actionWrapper(condition)
-            if (!(condition instanceof Action)) throw new Error(`The condition cannot be instance of ${typeof condition}`)
+            if (!(condition instanceof Action)) throw new Error(`The condition cannot be instance of ${typeof condition}.`)
             if (!this.conditions.includes(condition)) this.conditions.push(condition)
         })
         return this
@@ -38,7 +38,7 @@ export default class Rule {
     then(...conclusions) {
         flat(conclusions, conclusion => {
             if (typeof conclusion == 'string') conclusion = this.actionWrapper(conclusion)
-            if (!(conclusion instanceof Action)) throw new Error(`The conclusion cannot be instance of ${typeof conclusion}`)
+            if (!(conclusion instanceof Action)) throw new Error(`The conclusion cannot be instance of ${typeof conclusion}.`)
             if (!this.conclusions.includes(conclusion)) this.conclusions.push(conclusion)
         })
         return this

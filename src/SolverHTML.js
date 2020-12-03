@@ -1,6 +1,5 @@
 import Solver from './Solver'
 import swal from 'sweetalert'
-import { merge } from './Utils'
 
 let defaultOptions = {
     rules: "",
@@ -8,17 +7,20 @@ let defaultOptions = {
     iterations: "",
     head: "",
     path: "",
-    speed: 100
+    speed: 100,
+    numbering: true
 }
 
 function checkOptions() {
     return true
 }
 
-export default class SolverHtml extends Solver {
+export default class SolverHtml {
+
+    #solver
 
     constructor(rules, memory, options) {
-        super(rules, memory)
+        this.#solver = new Solver(rules, memory)
         this.options = Object.assign(defaultOptions, options)
         this.print()
     }

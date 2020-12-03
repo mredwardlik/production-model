@@ -6,13 +6,7 @@
     "email": "feft99@gmail.com"
   },
   "description": "This package helps to build a production model.",
-  "keywords": [
-    "model",
-    "rule",
-    "conclusion",
-    "condition",
-    "action"
-  ],
+  "keywords": ["model", "rule", "conclusion", "condition", "action"],
   "scripts": {
     "d": "webpack --mode development",
     "p": "webpack --mode production",

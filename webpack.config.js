@@ -12,6 +12,9 @@ module.exports = {
         libraryTarget: 'umd',
         library: 'ProductionModel'
     },
+    resolve: {
+        extensions: ['.js']
+    }
     module: {
         rules: [
             {

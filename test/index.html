@@ -118,6 +118,9 @@ let solver = pm.getSolverHtml({
     speed: 20
 })
 
+console.log(solver)
+console.log(solver.step())
+
 document.getElementById('solve').addEventListener("click", () => {
     solver.solve()
 })

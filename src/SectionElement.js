@@ -14,6 +14,14 @@ export default class SectionElement {
     getLength() {
         return this.container.length
     }
+    
+    getById(id) {
+        for (let i = 0; i < this.container.length; i++) if (this.container[i].id == id) return this.container[i]
+    }
+
+    getByName(name) {
+        for (let i = 0; i < this.container.length; i++) if (this.container[i].name == name) return this.container[i]
+    }
 
     add(...elements) {
         flat(elements, element => {
@@ -21,14 +29,6 @@ export default class SectionElement {
             this.container.push(element)
             this.sectionElement.appendChild(element)
         })
-    }
-
-    getById(id) {
-        for (let i = 0; i < this.container.length; i++) if (this.container[i].id == id) return this.container[i]
-    }
-
-    getByName(name) {
-        for (let i = 0; i < this.container.length; i++) if (this.container[i].name == name) return this.container[i]
     }
 
     removeLast(count = 1) {

@@ -61,10 +61,19 @@ export default class SolverHtml {
         document.getElementById(this.options['memory']).appendChild(this.memorySectionElement.getOrigin())
     }
 
+    reset() {
+        let elem = document.getElementById("myDiv");
+        elem.parentNode.removeChild(elem);
+    }
+
+    stop() {
+
+    }
+
     solve() {
         let timer = setInterval(() => {
             let step = this.solver.step()
-            
+
             if (step == true) {
                 clearInterval(timer)
                 return this.options.onSuccess(step)
@@ -75,12 +84,14 @@ export default class SolverHtml {
                 return this.options.onError(step)
             }
 
+            let ruleElement = this.rulesSectionElement.getById(this.options.prefixes['rule'] + (step.head + 1))
+            console.log(ruleElement)
+
             if (step.performing) {
-                console.log(step.head)
-                document.getElementById(this.options.prefixes['rule'] + (step.head + 1)).classList.add(this.options.classes['performed'])
+                ruleElement.classList.add(this.options.classes['performed'])
                 this.solver.currentAction.forEach(action => {
-                    let actionElement = this.elementCreator.action(action, this.memorySectionElement.getLength())
-                    this.memorySectionElement.add(this.elementCreator.action(action, this.memorySectionElement.getLength()))
+                    let actionElement = this.elementCreator.action(action, this.memorySectionElement.getLength() + 1)
+                    this.memorySectionElement.add(actionElement)
                 })
             }
 

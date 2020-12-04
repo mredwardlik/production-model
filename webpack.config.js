@@ -13,7 +13,7 @@ module.exports = {
         library: 'ProductionModel'
     },
     resolve: {
-        extensions: ['.js']
+        extensions: ['.js', '.css']
     },
     devtool: 'source-map',
     module: {

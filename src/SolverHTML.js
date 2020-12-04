@@ -1,19 +1,19 @@
 import ElementCreator from './ElementCreator'
 import Solver from './Solver'
-import CSS from './style.css'
+import CSS from './style'
 import { merge } from './Utils'
 
 let defaultOptions = {
     rules: "",
     memory: "",
     iterations: "",
-    ulElement: "",
     classes: {
         rules: CSS['rules'],
         memory: CSS['memory'],
         rule: CSS['rule'],
         action: CSS['action'],
-        performed: CSS['performed']
+        performed: CSS['performed'],
+        current: CSS['current']
     },
     prefixes: {
         rule: 'rule-',
@@ -61,14 +61,10 @@ export default class SolverHtml {
         document.getElementById(this.options['memory']).appendChild(this.memorySectionElement.getOrigin())
     }
 
-    reset() {
-        let elem = document.getElementById("myDiv");
-        elem.parentNode.removeChild(elem);
-    }
-
     stop() {
 
     }
+
 
     solve() {
         let timer = setInterval(() => {
@@ -85,10 +81,18 @@ export default class SolverHtml {
             }
 
             let ruleElement = this.rulesSectionElement.getById(this.options.prefixes['rule'] + (step.head + 1))
-            console.log(ruleElement)
+            
+            ruleElement.classList.add(this.options.classes['current'])
+            window.setTimeout(() => {
+                ruleElement.classList.remove(this.options.classes['current'])
+            }, this.options['speed'] * 1000);
+            
 
             if (step.performing) {
-                ruleElement.classList.add(this.options.classes['performed'])
+                window.setTimeout(() => {
+                    ruleElement.classList.add(this.options.classes['performed'])
+                }, this.options['speed'] * 1000);
+                
                 this.solver.currentAction.forEach(action => {
                     let actionElement = this.elementCreator.action(action, this.memorySectionElement.getLength() + 1)
                     this.memorySectionElement.add(actionElement)

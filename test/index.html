@@ -1,76 +1,71 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Conflict Set</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/reset.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="Test template for Production Model Package">
-    <meta name="author" content="Lik Eduard">
-    <link rel="stylesheet" href="style.css">
-    <title>Testing</title>
-</head>
+  <body>
+    <main class="main">
+      <div class="container">
+        <div class="conflict">
+          <div class="conflict__blocks">
 
-<body>
-    <div class="wrapper">
-        <div class="container">
+            <fieldset class="conflict__block rules">
+              <legend class="conflict__block-name">Правила</legend>
+              <ul class="conflict__items" id="rules">
+                <!-- <li class="conflict__items-item">0. ЕСЛИ запустить бизнес ТО открыть салон</li>
+                <li class="conflict__items-item">1. ЕСЛИ запустить бизнес ТО взять кредит</li>
+                <li class="conflict__items-item">2. ЕСЛИ открыть салон ТО зарабатывать деньги</li>
+                <li class="conflict__items-item">3. ЕСЛИ запустить бизнес ТО нанять работников</li>
+                <li class="conflict__items-item">4. ЕСЛИ запустить бизнес ТО искать капитал</li>
+                <li class="conflict__items-item">5. ЕСЛИ запустить бизнес И освободить время ТО найти партнера</li>
+                <li class="conflict__items-item">6. ЕСЛИ запустить бизнес И найти партнера ТО обсудить план</li>
+                <li class="conflict__items-item">7. ЕСЛИ искать капитал ТО освободить время</li>
+                <li class="conflict__items-item">8. ЕСЛИ обсудить план ТО составить договор с партнером</li>
+                <li class="conflict__items-item">9. ЕСЛИ составить договор с партнером И найти помещение ТО стать бизнесменом</li>
+                <li class="conflict__items-item">10. ЕСЛИ запустить бизнес И найти партнера И составить договор с партнером ТО найти помещение</li> -->
+              </ul>
+            </fieldset>
+            <!-- /.rules -->
 
-            <div class="panel top">
-                <div class="block rules">
-                    <h2 class="block-name">Rules</h2>
-                    <div class="items" id="rules"></div>
-                </div>
-                <div class="block memory">
-                    <h2 class="block-name">Memory</h2>
-                    <div class="items" id="memory"></div>
-                </div>
-            </div>
+            <fieldset class="conflict__block memory">
+              <legend class="conflict__block-name">Рабочая память</legend>
+              <ul class="conflict__items" id="memory">
+                <!-- <li class="conflict__items-item">запустить бизнес</li>
+                <li class="conflict__items-item">искать капитал</li>
+                <li class="conflict__items-item">освободить время</li>
+                <li class="conflict__items-item">найти партнера</li>
+                <li class="conflict__items-item">обсудить план</li>
+                <li class="conflict__items-item">составить договор с партнером</li>
+                <li class="conflict__items-item">найти помещение</li>
+                <li class="conflict__items-item">стать бизнесменом</li> -->
+              </ul>
+            </fieldset>
+            <!-- /.memory -->
 
-            <div class="panel bottom">
-                <div class="block buttons">
-                    <a class="button solve" id="solve">Solve</a>
-                    <!-- <a class="button reset" id="reset">Reset</a> -->
-                </div>
-            </div>
+          </div>
+          <!-- /.conflict__blocks -->
+
+          <a href="#" class="conflict__btn">Вывести</a>
+        </div>
 
         </div>
-    </div>
-</body>
-<script src="../lib/production-model.min.js"></script>
-<script>
-// let pm = new ProductionModel()
+      </div>
+    </main>
 
-// pm.registerActions([
-//     "работать военным",
-//     "иметь большую зарплату",
-//     "много программировать",
-//     "числиться в элитных войсках",
-//     "получить дом бесплатно",
-//     "мама будет счастлива",
-//     "остаться целым и невредимым"
-// ])
 
-// pm.setState((If, action) => {
-//     If("работать военным").then("иметь большую зарплату")
-//     If("работать военным", "много программировать").then("числиться в элитных войсках"),
-//     If("получить дом бесплатно").then("остаться целым и невредимым"),
-//     If("числиться в элитных войсках").then("получить дом бесплатно"),
-//     If("остаться целым и невредимым").then("мама будет счастлива"),
-//     If("иметь большую зарплату").then("много программировать")
-//     return ["работать военным"]
-// })
+    <script src="../lib/production-model.min.js"></script>
+    <script>
 
-// let solver = pm.getSolverHTML({
-//     rules: "rules",
-//     memory: "memory",
-//     iterations: "",
-//     head: ""
-// })
-
-// document.getElementById('solve').addEventListener("click", () => {
-//     solver.solve()
-// })
-
-let pm = new ProductionModel('en')
+let pm = new ProductionModel()
 
 pm.registerActions([
     "работать военным",
@@ -91,32 +86,29 @@ pm.registerActions([
 pm.setState((If) => {
     If("работать военным").then("иметь большую зарплату")
     If("работать военным", "много программировать").then("числиться в элитных войсках")
-    If("получить дом бесплатно").then("остаться целым и невредимым", "мама будет счастлива")
+    If("получить дом бесплатно").then("мама будет счастлива")
     If("числиться в элитных войсках").then("получить дом бесплатно")
     If("остаться целым и невредимым").then("мама будет счастлива")
     If("иметь большую зарплату").then("много программировать")
     If("числиться в элитных войсках").then("стать дисциплинированным")
     If("стрелять из автомата").then("получить травмы фаланг")
     If("остаться целым и невредимым").then("родные будут рады")
-    If("родные будут рады").then("остаться целым и невредимым")
     If("стрелять из автомата").then("получить хорошие навыки стрельбы")
-    If("получить травмы фаланг").then("остаться целым и невредимым")
 
     //return ["родные будут рады"]
-    //return ["работать военным"]
+    return ["работать военным"]
     //return ["работать военным", "получить травмы фаланг"]
-    return ["работать военным", "получить травмы фаланг", "стрелять из автомата"]
+    //return ["работать военным", "получить травмы фаланг", "стрелять из автомата"]
 })
 
 let solver = pm.getSolverHtml({
     rules: "rules",
     memory: "memory",
-    speed: 1
+    speed: 0.7
 })
 
-document.getElementById('solve').addEventListener("click", () => {
-    solver.solve()
-})
+solver.solve()
 
-</script>
+    </script>
+  </body>
 </html>

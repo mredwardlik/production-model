@@ -72,12 +72,12 @@ export default class SolverHtml {
 
             if (step == true) {
                 clearInterval(timer)
-                return this.options.onSuccess(step)
+                return this.options.onSuccess(this.solver)
             }
 
             if (step == false) {
                 clearInterval(timer)
-                return this.options.onError(step)
+                return this.options.onError(this.solver)
             }
 
             let ruleElement = this.rulesSectionElement.getById(this.options.prefixes['rule'] + (step.head + 1))

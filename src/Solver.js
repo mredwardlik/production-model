@@ -66,9 +66,9 @@ export default class Solver {
     step() {
         this.performing = false
         this.currentAction = null
-        if (++this.emptySteps > this.rules.length - this.performed.length) return false
         if (this.rules.length == this.performed.length) return true
         if (this.iteration >= this.rules.length) return false
+        if (++this.emptySteps > this.rules.length - this.performed.length) return false
         this.head = this.getNext(this.head)
         let conclusions = this.rules[this.head].perform(this.memory.container)
         if (Array.isArray(conclusions) && conclusions != []) {

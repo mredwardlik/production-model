@@ -15,7 +15,7 @@ module.exports = {
     resolve: {
         extensions: ['.js', '.css']
     },
-    devtool: 'source-map',
+    //devtool: 'source-map',
     module: {
         rules: [
 

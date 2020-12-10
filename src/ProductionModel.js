@@ -17,23 +17,23 @@ class ProductionModel {
 
     #actionFactory
     #ruleFactory
-    #memory
-    #rules
+    #memoryContainer
+    #rulesContainer
 
     constructor(callback) {
         this.#actionFactory = new ActionFactory()
         this.#ruleFactory = new RuleFactory(this.#actionFactory.getWrapper())
-        this.#memory = new Memory(this.#actionFactory.getWrapper())
-        this.#rules = null
+        this.#memoryContainer = new Memory(this.#actionFactory.getWrapper())
+        this.#rulesContainer = null
 
         this.setState(callback)
     }
 
     setState(callback) {
-        this.#memory.add(callback(
+        this.#memoryContainer.add(callback(
             (...conditions) => this.#ruleFactory.create(...conditions),
             (name) => this.#actionFactory.create(name),
-            this.#memory
+            this.#memoryContainer
         ))
     }
 
@@ -46,11 +46,11 @@ class ProductionModel {
     }
 
     getSolverHtml(options) {
-        return new SolverHtml(this.#ruleFactory.getCreated(), this.#memory, options)
+        return new SolverHtml(this.#ruleFactory.getCreated(), this.#memoryContainer, options)
     }
 
     getSolver() {
-        return new Solver(this.#ruleFactory.getCreated(), this.#memory)
+        return new Solver(this.#ruleFactory.getCreated(), this.#memoryContainer)
     }
 
 }

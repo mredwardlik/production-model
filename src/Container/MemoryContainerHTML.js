@@ -1,18 +1,14 @@
 import { flat } from './Utils' 
+import Container from './Container/Container'
 
-export default class SectionElement {
+export default class MemoryContainerHTML extends Container {
 
-    constructor(sectionElement) {
-        this.sectionElement = sectionElement
-        this.container = []
+    constructor(element) {
+        this.element = element
     }
 
     getOrigin() {
-        return this.sectionElement
-    }
-
-    getLength() {
-        return this.container.length
+        return this.element
     }
     
     getById(id) {
@@ -27,13 +23,8 @@ export default class SectionElement {
         flat(elements, element => {
             //if (!(element instanceof Element)) throw new Error(`The element cannot be instance of ${typeof element}.`)
             this.container.push(element)
-            this.sectionElement.appendChild(element)
+            this.element.appendChild(element)
         })
-    }
-
-    removeLast(count = 1) {
-        let element = this.container.splice(this.container.length - 1, count)
-        return element ? true : false
     }
 
 }

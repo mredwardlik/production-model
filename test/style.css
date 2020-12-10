@@ -145,18 +145,18 @@ h2 {
     background: #56c240;
 }
 
-.reset {
+.pause {
     background: #e64c65;
 }
 
-.reset:hover {
+.pause:hover {
     background: #cc324b;
 }
 
 /* Events */
 
-.crossed {
-    text-decoration: line-through;
+.performed {
+    color: red;
 }
 
 .current {

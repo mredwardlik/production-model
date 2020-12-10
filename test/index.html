@@ -28,7 +28,7 @@
             <div class="panel bottom">
                 <div class="block buttons">
                     <a class="button solve" id="solve">Solve</a>
-                    <a class="button reset" id="pause">Pause</a>
+                    <a class="button pause" id="pause">Pause</a>
                 </div>
             </div>
 
@@ -60,9 +60,10 @@ let solver = pm.getSolverHtml({
     rules: "rules",
     memory: "memory",
     classes: {
-        current: "current"
+        current: "current",
+        performed: "performed"
     },
-    speed: 0.1,
+    speed: 1,
     onSuccess: (state) => {
         console.log(state)
     },

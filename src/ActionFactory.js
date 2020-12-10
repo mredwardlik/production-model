@@ -23,7 +23,7 @@ export default class ActionFactory {
     create(name) {
         let actionIndex = this.created.findIndex(action => action == name)
         if (actionIndex >= 0) return this.created[actionIndex]
-        this.created.push(new Action(name, this.names))
+        this.created.push(new Action(name))
         return this.created[this.created.length - 1]
     }
 
@@ -34,8 +34,5 @@ export default class ActionFactory {
     getWrapper() {
         return name => this.create(name)
     }
-
-
-
 
 }

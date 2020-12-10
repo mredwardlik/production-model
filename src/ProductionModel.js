@@ -18,11 +18,13 @@ class ProductionModel {
     #actionFactory
     #ruleFactory
     #memory
+    #rules
 
     constructor(callback) {
         this.#actionFactory = new ActionFactory()
         this.#ruleFactory = new RuleFactory(this.#actionFactory.getWrapper())
         this.#memory = new Memory(this.#actionFactory.getWrapper())
+        this.#rules = null
 
         this.setState(callback)
     }

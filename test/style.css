@@ -159,6 +159,6 @@ h2 {
     text-decoration: line-through;
 }
 
-.head {
-    color: red;
+.current {
+    background-color: brown;
 }

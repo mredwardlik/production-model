@@ -10,12 +10,11 @@ export default class Action {
      */
     constructor(name, names) {
         this.name = name
-        this.names = names
         this.callback = null
     }
 
     perform() {
-        if (this.callback != null) this.callback(this.name, this.names.slice())
+        if (this.callback != null) this.callback(this.name)
     }
 
     /**

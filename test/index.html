@@ -28,7 +28,7 @@
             <div class="panel bottom">
                 <div class="block buttons">
                     <a class="button solve" id="solve">Solve</a>
-                    <!-- <a class="button reset" id="reset">Reset</a> -->
+                    <a class="button reset" id="pause">Pause</a>
                 </div>
             </div>
 
@@ -39,26 +39,30 @@
 <script>
 
 let pm = new ProductionModel((IF) => {
-    IF("идти к девушке").then("иметь с собой шоколадку")
-    IF("иметь с собой шоколадку").then("девушка будет рада")
+
+    IF("совместный просмотр фильма").then("есть о чем поговорить") 
     IF("хорошо провести вечер").then("быть счастливым")
-    IF("иметь с собой шоколадку", "быть счастливым").then("девушка обнимет")
+    IF("иметь с собой шоколадку", "девушка будет рада").then("девушка обнимет")
     IF("девушка обнимет").then("будет приятно")
     IF("есть о чем поговорить").then("хорошо провести вечер")
     IF("будет приятно").then("девушка приготовит")
     IF("девушка приготовит").then("быть сытым")
     IF("быть сытым").then("обнимать девушку")
     IF("обнимать девушку").then("девушка идет на свидание")
+    IF("идти к девушке").then("иметь с собой шоколадку")
     IF("девушка идет на свидание").then("совместный просмотр фильма")
-    IF("совместный просмотр фильма").then("есть о чем поговорить")
-
-    return 'идти к девушке' 
+    IF("иметь с собой шоколадку").then("девушка будет рада")
+    
+    return 'идти к девушке'
 })
 
 let solver = pm.getSolverHtml({
     rules: "rules",
     memory: "memory",
-    speed: 0.2,
+    classes: {
+        current: "current"
+    },
+    speed: 0.1,
     onSuccess: (state) => {
         console.log(state)
     },
@@ -67,8 +71,12 @@ let solver = pm.getSolverHtml({
     }
 })
 
-document.getElementById('solve').addEventListener("click", () => {
+document.getElementById('solve').addEventListener('click', () => {
     solver.solve()
+})
+
+document.getElementById('pause').addEventListener('click', () => {
+    solver.pause()
 })
 
 </script>

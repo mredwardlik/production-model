@@ -21,17 +21,13 @@ let defaultOptions = {
     },
     head: "",
     path: "",
-    speed: 2,
+    speed: 1,
     numbering: {
         rule: true,
         action: false
     },
-    onSuccess: function() { console.log('Success...') },
-    onError: function() { console.log('Error...') }
-}
-
-function prepareOptions(options) {
-    return true
+    onSuccess: function() { console.log('onSuccess...') },
+    onError: function() { console.log('onError...') }
 }
 
 export default class SolverHtml {
@@ -42,6 +38,7 @@ export default class SolverHtml {
         this.elementCreator = new ElementCreator(this.options)
         this.memorySectionElement = this.elementCreator.memorySection()
         this.rulesSectionElement = this.elementCreator.rulesSection()
+        this.timer = null
         
         this.#init()
     }
@@ -61,22 +58,21 @@ export default class SolverHtml {
         document.getElementById(this.options['memory']).appendChild(this.memorySectionElement.getOrigin())
     }
 
-    stop() {
-
+    pause() {
+        clearInterval(this.timer)
     }
 
-
     solve() {
-        let timer = setInterval(() => {
+        this.timer = setInterval(() => {
             let step = this.solver.step()
 
             if (step == true) {
-                clearInterval(timer)
+                this.pause()
                 return this.options.onSuccess(this.solver)
             }
 
             if (step == false) {
-                clearInterval(timer)
+                this.pause()
                 return this.options.onError(this.solver)
             }
 
@@ -93,7 +89,7 @@ export default class SolverHtml {
                     ruleElement.classList.add(this.options.classes['performed'])
                 }, this.options['speed'] * 1000);
                 
-                this.solver.currentAction.forEach(action => {
+                this.solver.currentActions.forEach(action => {
                     let actionElement = this.elementCreator.action(action, this.memorySectionElement.getLength() + 1)
                     this.memorySectionElement.add(actionElement)
                 })

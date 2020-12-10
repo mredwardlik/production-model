@@ -20,7 +20,7 @@ export default class Solver {
         this.performed = []
         this.memory = memory
         this.performing = false
-        this.currentAction = null
+        this.currentActions = null
 
         this.head = -1
         this.iteration = 0
@@ -65,7 +65,7 @@ export default class Solver {
      */
     step() {
         this.performing = false
-        this.currentAction = null
+        this.currentActions = null
         if (this.rules.length == this.performed.length) return true
         if (this.iteration >= this.rules.length) return false
         if (++this.emptySteps > this.rules.length - this.performed.length) return false
@@ -76,7 +76,7 @@ export default class Solver {
             this.memory.add(conclusions)
             this.performed.push(this.head)
             this.performing = true
-            this.currentAction = conclusions
+            this.currentActions = conclusions
         }
         this.snapshot()
         return this

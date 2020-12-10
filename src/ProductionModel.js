@@ -19,18 +19,12 @@ class ProductionModel {
     #ruleFactory
     #memory
 
-    constructor() {
+    constructor(callback) {
         this.#actionFactory = new ActionFactory()
         this.#ruleFactory = new RuleFactory(this.#actionFactory.getWrapper())
         this.#memory = new Memory(this.#actionFactory.getWrapper())
-    }
 
-    /**
-     * Add new actions in production model for the next checks.
-     * @param {...string} names 
-     */
-    registerActions(...names) {
-        this.#actionFactory.addNames(...names)
+        this.setState(callback)
     }
 
     setState(callback) {
@@ -41,10 +35,12 @@ class ProductionModel {
         ))
     }
 
+    stringActions() {
+        return this.#actionFactory.getCreated().map((action) => action.toString())
+    }
+
     stringRules() {
-        return this.#ruleFactory.getCreated().map((rule) => {
-            return rule.toString()
-        })
+        return this.#ruleFactory.getCreated().map((rule) => rule.toString())
     }
 
     getSolverHtml(options) {

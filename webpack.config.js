@@ -1,7 +1,9 @@
 const path = require('path')
 
+let PROD = 1
+
 module.exports = {
-    mode: 'development',
+    mode: PROD ? 'production' : 'development',
     watch: false,
     context: path.resolve(__dirname, 'src'),
     entry: './ProductionModel.js',

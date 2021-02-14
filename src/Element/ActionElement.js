@@ -5,5 +5,4 @@ export default class ActionElement {
         this.action = action
     }
 
-
 }

@@ -6,9 +6,8 @@ export default class Action {
     /**
      * Initialize variables
      * @param {string} name - The action id.
-     * @param {string[]} names - The registered names.
      */
-    constructor(name, names) {
+    constructor(name) {
         this.name = name
         this.callback = null
     }

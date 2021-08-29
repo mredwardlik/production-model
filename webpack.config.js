@@ -1,9 +1,9 @@
 const path = require('path')
 
-let PROD = 1
+let isProduction = () => true;
 
 module.exports = {
-    mode: PROD ? 'production' : 'development',
+    mode: isProduction() ? 'production' : 'development',
     watch: false,
     context: path.resolve(__dirname, 'src'),
     entry: './ProductionModel.js',
@@ -29,7 +29,7 @@ module.exports = {
                         loader: 'css-loader',
                         options: {
                             modules: {
-                                localIdentName: '[local]-[hash:base64:4]' 
+                                localIdentName: '[local]-[hash:base64:4]'
                             }
                         }
                     }
@@ -44,7 +44,7 @@ module.exports = {
                     options: {
                         presets: ['@babel/preset-env'],
                         plugins: [
-                            '@babel/plugin-proposal-class-properties', 
+                            '@babel/plugin-proposal-class-properties',
                             '@babel/plugin-proposal-private-methods',
                             '@babel/plugin-proposal-private-property-in-object'
                         ]
